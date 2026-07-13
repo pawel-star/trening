@@ -113,6 +113,12 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .exlist-item .sub{font-size:.75rem; color:var(--muted)}
 
 details{border-top:1px solid var(--line); margin-top:8px; padding-top:6px}
+details.expl{border-top:none; margin:0; padding:0; border-bottom:1px solid var(--line)}
+details.expl:last-of-type{border-bottom:none}
+details.expl summary{color:inherit; font-size:inherit; font-weight:inherit; padding:0}
+details.expl summary::before{content:none}
+details.expl summary::-webkit-details-marker{display:none}
+input[type=number],select,button{min-height:42px}
 summary{cursor:pointer; color:var(--muted); font-size:.85rem; font-weight:600; list-style:none}
 summary::before{content:"▸ "; color:var(--accent)}
 details[open] summary::before{content:"▾ "}
@@ -160,6 +166,12 @@ details[open] summary::before{content:"▾ "}
 
 <script>
 "use strict";
+window.onerror=function(msg,src2,line){
+  try{var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999;background:#7a2e26;color:#fff;padding:10px 14px;font-size:13px';
+  d.textContent='Błąd aplikacji: '+msg+' (linia '+line+') - zrob screen i wyslij';
+  document.body.appendChild(d);}catch(e){}
+};
 /* ============ ILUSTRACJE SVG (sylwetka: pozycja startowa -> końcowa) ============ */
 function fig(p,color){
   let s='';
@@ -625,7 +637,8 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
   if(S.aktywna&&b.dataset.tab==='dzis'){ pokaz('trening'); return; }
   pokaz(b.dataset.tab);
 });
-function pokaz(e){
+function pokaz(e,zostanTu){
+  const y=window.scrollY||0;
   ekran=e;
   document.querySelectorAll('#tabs button').forEach(b=>
     b.classList.toggle('on',b.dataset.tab===e||(e==='trening'&&b.dataset.tab==='dzis')));
@@ -633,7 +646,7 @@ function pokaz(e){
            postepy:renderPostepy,biblioteka:renderBiblioteka,ustawienia:renderUstawienia,
            planedycja:renderPlanEdycja};
   app.innerHTML='<div class="screen active">'+(R[e]?R[e]():'')+'</div>';
-  window.scrollTo(0,0);
+  window.scrollTo(0,zostanTu?y:0);
   if(e==='postepy') rysujWykresy();
 }
 
@@ -650,6 +663,12 @@ function startText(ex,wariant){
   if(!ex.st) return null;
   const kg=ex.st.kg!=null?ex.st.kg:zaokr((S.profil.waga||100)*ex.st.m);
   return 'Na start (przy '+(S.profil.waga||'?')+' kg masy cia\u0142a): ok. '+kg+' kg. Pierwsza sesja na RPE 5-6, ma by\u0107 wyra\u017any zapas.';
+}
+function linkiPodgladu(ex,wariant){
+  const q=encodeURIComponent(ex.en+(wariant==='s'&&ex.sprzet.includes('s')?' machine':' resistance band')+' exercise');
+  return '<div class="row2" style="margin:6px 0">'+
+   '<a href="https://www.google.com/search?tbm=isch&q='+q+'" target="_blank" rel="noopener" class="btn small secondary" style="width:100%;text-align:center;text-decoration:none">\ud83d\udcf7 Jak to wygl\u0105da</a>'+
+   '<a href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener" class="btn small secondary" style="width:100%;text-align:center;text-decoration:none">\u25b6 Technika wideo</a></div>';
 }
 function opisHTML(ex){
   if(!ex.poz) return '<p class="small">'+esc(ex.opis||'')+'</p>';
@@ -715,6 +734,8 @@ function renderDzis(){
 
   h+='<div class="seg"><button class="'+(war==='s'?'on':'')+'" onclick="S.ust.wariant=\'s\';save();pokaz(\'dzis\')">🏋️ Siłownia</button>'+
      '<button class="'+(war==='d'?'on':'')+'" onclick="S.ust.wariant=\'d\';save();pokaz(\'dzis\')">🏠 Dom (gumy)</button></div>';
+  h+='<button class="btn" style="margin:4px 0 2px" onclick="startTrening()">Zacznij trening</button>'+
+     '<p class="tiny muted" style="text-align:center;margin:2px 0 8px">serie, ciężary i RPE logujesz po starcie, przy każdym ćwiczeniu</p>';
 
   const bol=sugestiaBolu();
   if(bol){
@@ -728,11 +749,12 @@ function renderDzis(){
     if(ostrozny()&&ex.safety==='block') return;
     const sug=sugestiaDlaCwiczenia(ex,slot);
     const st=!ostatnieWpisy(ex.id,1).length?startText(ex,war):null;
-    h+='<div class="exlist-item"><div><div class="nm">'+esc(ex.nazwa)+'</div>'+
+    h+='<details class="expl"><summary><div class="exlist-item" style="border-bottom:none"><div><div class="nm">'+esc(ex.nazwa)+'</div>'+
        '<div class="sub">'+slot.serie+' × '+slot.od+'-'+slot.do+(ex.typ==='t'?' s':' powt.')+'</div>'+
        (st?'<div class="suggest">'+esc(st)+'</div>':'')+
        (sug?'<div class="suggest">'+esc(sug.txt)+'</div>':'')+
-       '</div>'+tagHTML(ex.safety)+'</div>';
+       '</div>'+tagHTML(ex.safety)+'</div></summary>'+
+       '<div class="card sub" style="margin-top:0"><div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>'+linkiPodgladu(ex,war)+opisHTML(ex)+spineTip(ex.wsk)+'</div></details>';
   });
   h+='</div>';
 
@@ -780,6 +802,7 @@ function kartaCwiczenia(ex,slot,i){
     '<div class="tiny muted">'+esc(ex.en)+' · '+esc(ex.partia)+' · cel: '+slot.serie+' × '+slot.od+'-'+slot.do+' '+jedn+'</div></div>'+
     tagHTML(ex.safety)+'</div>';
   h+='<div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>';
+  h+=linkiPodgladu(ex,S.aktywna.wariant);
   h+=opisHTML(ex);
   h+=spineTip(ex.wsk);
   const sug=sugestiaDlaCwiczenia(ex,slot);
@@ -815,19 +838,19 @@ function dodajSerie(id){
   const prev=ostatnieWpisy(id,1);
   const wz=ost||{c:prev.length?prev[0].serie[0].c:'',p:'',rpe:''};
   a.wpisy[id].push({c:wz.c,p:'',rpe:''});
-  save(); pokaz('trening');
+  save(); pokaz('trening',true);
 }
 function ustawSerie(id,si,pole,v){
   S.aktywna.wpisy[id][si][pole]=v===''?'':Number(v); save();
   if(pole==='rpe'&&v!=='') timerPrzerwy(75); // wpisany RPE = seria skończona, rusza przerwa
 }
-function usunSerie(id,si){ S.aktywna.wpisy[id].splice(si,1); save(); pokaz('trening'); }
+function usunSerie(id,si){ S.aktywna.wpisy[id].splice(si,1); save(); pokaz('trening',true); }
 function timerPrzerwy(sec){
   startTimer({label:'Przerwa między seriami',sec,sygnal:'przerwa'});
 }
 function timerCwiczenia(id,sec){
   startTimer({label:'Ćwiczenie na czas: trzymaj!',sec,sygnal:'cwiczenie',
-    onEnd:()=>{const a=S.aktywna;a.wpisy[id]=a.wpisy[id]||[];a.wpisy[id].push({c:'',p:sec,rpe:''});save();if(ekran==='trening')pokaz('trening');}});
+    onEnd:()=>{const a=S.aktywna;a.wpisy[id]=a.wpisy[id]||[];a.wpisy[id].push({c:'',p:sec,rpe:''});save();if(ekran==='trening')pokaz('trening',true);}});
 }
 
 /* ---- cardio ---- */
@@ -852,7 +875,7 @@ function startCardio(){
       const min=Math.max(1,Math.round(sec/60));
       S.aktywna.cardio.push({rodzaj,min}); save();
       sygnal('cardio');
-      if(ekran==='trening') pokaz('trening');
+      if(ekran==='trening') pokaz('trening',true);
       setTimeout(()=>{ if(confirm('Blok '+min+' min zapisany. Odpalić 3-minutową przerwę na rozciąganie łydek i stóp?')) przerwaCardio(); },100);
     }});
 }
@@ -1000,7 +1023,7 @@ function renderBiblioteka(){
       '<div><h3 style="margin-bottom:2px">'+esc(ex.nazwa)+'</h3><div class="tiny muted">'+esc(ex.en)+' · '+esc(ex.partia)+' · '+ex.sprzet.map(s=>s==='s'?'siłownia':'dom').join(' / ')+'</div></div>'+
       tagHTML(ex.safety)+'</div>';
     if(ex.safety==='block'){ h+=spineTip(ex.wsk); h+='</div>'; return; }
-    h+='<div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>'+opisHTML(ex)+spineTip(ex.wsk);
+    h+='<div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>'+linkiPodgladu(ex,ex.sprzet.includes('s')?'s':'d')+opisHTML(ex)+spineTip(ex.wsk);
     const st=startText(ex,'s')||startText(ex,'d');
     if(st) h+='<p class="tiny muted">'+esc(st)+'</p>';
     h+='</div>';
@@ -1114,8 +1137,8 @@ function edytujSlot(t,i,pole,v){
   }
   pl[t].lista[i][pole]=v; save();
 }
-function usunSlot(t,i){ const pl=zapewnijOverride(); pl[t].lista.splice(i,1); save(); pokaz('planedycja'); }
-function dodajSlot(t){ const pl=zapewnijOverride(); pl[t].lista.push({s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10}); save(); pokaz('planedycja'); }
+function usunSlot(t,i){ const pl=zapewnijOverride(); pl[t].lista.splice(i,1); save(); pokaz('planedycja',true); }
+function dodajSlot(t){ const pl=zapewnijOverride(); pl[t].lista.push({s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10}); save(); pokaz('planedycja',true); }
 
 /* ============ START ============ */
 setInterval(()=>{ if(ekran==='trening'&&S.aktywna&&!TIMER){ /* odświeżenie zegara nagłówka */ 
