@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14171b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Trening — plan FBW z ochroną lędźwi</title>
+<style>
+:root{
+  --bg:#14171b; --panel:#1d2127; --panel2:#232830; --line:#2e343d;
+  --text:#e9ebee; --muted:#9aa3ad; --faint:#6b7480;
+  --accent:#e8a13d; --accent-deep:#c9831f;
+  --safe:#5fb878; --warn:#e4c05c; --block:#d96c5f;
+  --radius:14px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px; line-height:1.45; height:100%;}
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom));}
+body.flash{animation:flashbg .9s ease}
+@keyframes flashbg{0%,100%{background:var(--bg)}30%{background:#4a3510}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+h1,h2,h3{margin:0 0 .4em; font-weight:700; letter-spacing:-.01em}
+h1{font-size:1.5rem} h2{font-size:1.15rem} h3{font-size:1rem}
+p{margin:.3em 0}
+.eyebrow{font-size:.7rem; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:600}
+.muted{color:var(--muted)} .small{font-size:.85rem} .tiny{font-size:.75rem}
+
+.screen{display:none; padding:18px 16px 24px; max-width:640px; margin:0 auto}
+.screen.active{display:block}
+
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:14px 14px; margin:10px 0}
+.card.sub{background:var(--panel2)}
+
+button{font:inherit; color:inherit; border:none; cursor:pointer; border-radius:12px}
+.btn{display:block; width:100%; padding:14px; background:var(--accent); color:#1a1408;
+  font-weight:700; font-size:1.05rem; border-radius:12px}
+.btn:active{background:var(--accent-deep)}
+.btn.secondary{background:var(--panel2); color:var(--text); border:1px solid var(--line); font-weight:600}
+.btn.small{width:auto; padding:8px 14px; font-size:.9rem; display:inline-block}
+.btn.danger{background:transparent; color:var(--block); border:1px solid var(--block)}
+.btn:disabled{opacity:.4}
+
+.seg{display:flex; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:3px; margin:8px 0}
+.seg button{flex:1; padding:9px 6px; background:transparent; color:var(--muted); font-weight:600; border-radius:9px; font-size:.95rem}
+.seg button.on{background:var(--accent); color:#1a1408}
+
+.tag{display:inline-block; padding:2px 9px; border-radius:999px; font-size:.7rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.06em}
+.tag.safe{background:rgba(95,184,120,.15); color:var(--safe)}
+.tag.warn{background:rgba(228,192,92,.15); color:var(--warn)}
+.tag.block{background:rgba(217,108,95,.15); color:var(--block)}
+.tag.plain{background:var(--panel2); color:var(--muted); border:1px solid var(--line)}
+
+.spine-tip{display:flex; gap:8px; align-items:flex-start; background:rgba(232,161,61,.08);
+  border-left:3px solid var(--accent); padding:8px 10px; border-radius:0 8px 8px 0; margin:8px 0; font-size:.85rem}
+.spine-tip svg{flex:none; margin-top:2px}
+
+nav#tabs{position:fixed; bottom:0; left:0; right:0; display:flex; background:#101317;
+  border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom); z-index:50}
+nav#tabs button{flex:1; background:none; color:var(--faint); padding:9px 2px 7px; font-size:.68rem;
+  display:flex; flex-direction:column; align-items:center; gap:3px; border-radius:0; font-weight:600}
+nav#tabs button.on{color:var(--accent)}
+nav#tabs svg{width:22px; height:22px}
+
+input[type=number],input[type=text],textarea,select{
+  width:100%; background:var(--panel2); border:1px solid var(--line); color:var(--text);
+  border-radius:10px; padding:10px 10px; font:inherit}
+input[type=number]{text-align:center}
+textarea{min-height:70px; resize:vertical}
+label.fld{display:block; margin:10px 0}
+label.fld span{display:block; font-size:.78rem; color:var(--muted); margin-bottom:4px}
+
+.setrow{display:grid; grid-template-columns:34px 1fr 1fr 1fr 40px; gap:6px; align-items:center; margin:6px 0}
+.setrow .n{color:var(--muted); font-size:.85rem; text-align:center}
+.setrow .del{background:none; color:var(--faint); font-size:1.1rem; padding:6px}
+.sethead{display:grid; grid-template-columns:34px 1fr 1fr 1fr 40px; gap:6px; font-size:.68rem;
+  color:var(--faint); text-transform:uppercase; letter-spacing:.05em; text-align:center; margin-top:8px}
+
+.timerbar{display:flex; align-items:center; gap:10px; background:var(--panel2); border:1px solid var(--line);
+  border-radius:12px; padding:10px 12px; margin:8px 0}
+.timerbar .t{font-variant-numeric:tabular-nums; font-size:1.5rem; font-weight:700; min-width:86px}
+.timerbar.hot{border-color:var(--accent)}
+.timerbar.done{border-color:var(--safe)}
+
+#stickyTimer{position:fixed; left:12px; right:12px; bottom:calc(70px + env(safe-area-inset-bottom));
+  background:#20242b; border:1px solid var(--accent); border-radius:14px; padding:10px 14px;
+  display:none; align-items:center; gap:12px; z-index:60; box-shadow:0 8px 24px rgba(0,0,0,.5); max-width:616px; margin:0 auto}
+#stickyTimer.show{display:flex}
+#stickyTimer .t{font-size:1.6rem; font-weight:800; font-variant-numeric:tabular-nums}
+
+.exdrawing{background:var(--panel2); border-radius:10px; padding:6px; margin:8px 0; text-align:center}
+.exdrawing svg{max-width:100%; height:auto}
+
+.range-wrap{margin:14px 0}
+.range-wrap output{font-weight:800; font-size:1.3rem; color:var(--accent); margin-left:8px}
+input[type=range]{width:100%; accent-color:var(--accent)}
+
+.chartbox{background:var(--panel2); border-radius:10px; padding:8px; margin:8px 0; overflow-x:auto}
+.chartbox svg{display:block}
+
+.exlist-item{display:flex; justify-content:space-between; align-items:center; gap:8px;
+  padding:11px 4px; border-bottom:1px solid var(--line)}
+.exlist-item:last-child{border-bottom:none}
+.exlist-item .nm{font-weight:600}
+.exlist-item .sub{font-size:.75rem; color:var(--muted)}
+
+details{border-top:1px solid var(--line); margin-top:8px; padding-top:6px}
+summary{cursor:pointer; color:var(--muted); font-size:.85rem; font-weight:600; list-style:none}
+summary::before{content:"▸ "; color:var(--accent)}
+details[open] summary::before{content:"▾ "}
+
+.notice{border:1px solid var(--warn); background:rgba(228,192,92,.07); border-radius:12px; padding:10px 12px; font-size:.85rem; margin:10px 0}
+.notice.red{border-color:var(--block); background:rgba(217,108,95,.08)}
+.hr{height:1px; background:var(--line); margin:12px 0}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.statgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0}
+.stat{background:var(--panel2); border-radius:10px; padding:10px; text-align:center}
+.stat b{display:block; font-size:1.3rem}
+.stat span{font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+.filters{display:flex; gap:6px; flex-wrap:wrap; margin:8px 0}
+.filters select{width:auto; flex:1; min-width:100px; font-size:.85rem; padding:8px}
+.suggest{border-left:3px solid var(--safe); background:rgba(95,184,120,.07); padding:8px 10px; border-radius:0 8px 8px 0; font-size:.85rem; margin:6px 0}
+.suggest.down{border-color:var(--block); background:rgba(217,108,95,.07)}
+</style>
+</head>
+<body>
+
+<div id="stickyTimer">
+  <div class="t" id="stickyTime">0:00</div>
+  <div style="flex:1">
+    <div class="tiny muted" id="stickyLabel">Przerwa</div>
+  </div>
+  <button class="btn small secondary" id="stickyStop">Stop</button>
+</div>
+
+<div id="app"></div>
+
+<nav id="tabs">
+  <button data-tab="dzis" class="on">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h3l2-7 4 14 2-7h5"/></svg>
+    Dziś</button>
+  <button data-tab="postepy">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15v-4m4 4V8m4 7v-6"/></svg>
+    Postępy</button>
+  <button data-tab="biblioteka">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15 6l4 1-3 13-4-1z"/></svg>
+    Ćwiczenia</button>
+  <button data-tab="ustawienia">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m10 10 2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+    Ustawienia</button>
+</nav>
+
+<script>
+"use strict";
+/* ============ ILUSTRACJE SVG (sylwetka: pozycja startowa -> końcowa) ============ */
+function fig(p,color){
+  let s='';
+  const L=(pts)=>'<polyline points="'+pts.map(q=>q.join(',')).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>';
+  s+='<circle cx="'+p.hd[0]+'" cy="'+p.hd[1]+'" r="6" fill="none" stroke="'+color+'" stroke-width="3.5"/>';
+  s+=L([p.sh,p.hp]);
+  if(p.el&&p.ha) s+=L([p.sh,p.el,p.ha]);
+  if(p.el2&&p.ha2) s+=L([p.sh,p.el2,p.ha2]);
+  if(p.kn&&p.ft) s+=L([p.hp,p.kn,p.ft]);
+  if(p.kn2&&p.ft2) s+=L([p.hp,p.kn2,p.ft2]);
+  if(p.extra) s+=p.extra;
+  return s;
+}
+const GROUND='<line x1="8" y1="84" x2="98" y2="84" stroke="#3a414c" stroke-width="2"/>';
+const POSES={
+stand:{hd:[50,14],sh:[50,25],hp:[50,52],el:[52,38],ha:[53,49],kn:[50,67],ft:[50,83]},
+squatChair:{hd:[42,28],sh:[44,38],hp:[40,60],el:[58,40],ha:[70,40],kn:[54,64],ft:[50,83],
+  extra:'<rect x="26" y="62" width="14" height="4" rx="2" fill="#3a414c"/><rect x="26" y="66" width="4" height="17" fill="#3a414c"/>'},
+legpressA:{hd:[30,42],sh:[34,50],hp:[46,62],el:[42,60],ha:[48,66],kn:[54,48],ft:[62,58],
+  extra:'<rect x="60" y="34" width="6" height="34" rx="2" fill="#3a414c" transform="rotate(18 63 51)"/>'},
+legpressB:{hd:[26,44],sh:[30,52],hp:[44,62],el:[38,62],ha:[44,68],kn:[58,50],ft:[72,42],
+  extra:'<rect x="70" y="20" width="6" height="34" rx="2" fill="#3a414c" transform="rotate(18 73 37)"/>'},
+pullA:{hd:[50,26],sh:[50,36],hp:[48,60],el:[58,26],ha:[63,14],kn:[60,66],ft:[63,83],
+  extra:'<line x1="40" y1="8" x2="86" y2="8" stroke="#3a414c" stroke-width="3"/>'},
+pullB:{hd:[50,26],sh:[50,36],hp:[48,60],el:[60,40],ha:[64,30],kn:[60,66],ft:[63,83],
+  extra:'<line x1="40" y1="8" x2="86" y2="8" stroke="#3a414c" stroke-width="3"/>'},
+rowA:{hd:[44,24],sh:[46,34],hp:[44,60],el:[58,38],ha:[70,40],kn:[56,66],ft:[60,83],
+  extra:'<line x1="40" y1="34" x2="40" y2="62" stroke="#3a414c" stroke-width="4"/>'},
+rowB:{hd:[44,24],sh:[46,34],hp:[44,60],el:[56,42],ha:[52,46],kn:[56,66],ft:[60,83],
+  extra:'<line x1="40" y1="34" x2="40" y2="62" stroke="#3a414c" stroke-width="4"/>'},
+pressA:{hd:[42,24],sh:[44,34],hp:[42,60],el:[54,36],ha:[56,42],kn:[54,66],ft:[58,83],
+  extra:'<line x1="38" y1="24" x2="38" y2="62" stroke="#3a414c" stroke-width="4"/>'},
+pressB:{hd:[42,24],sh:[44,34],hp:[42,60],el:[58,34],ha:[72,34],kn:[54,66],ft:[58,83],
+  extra:'<line x1="38" y1="24" x2="38" y2="62" stroke="#3a414c" stroke-width="4"/>'},
+pushA:{hd:[26,36],sh:[34,42],hp:[56,56],el:[36,54],ha:[36,64],kn:[70,64],ft:[82,72],
+  extra:'<rect x="24" y="62" width="22" height="5" rx="2" fill="#3a414c"/>'},
+pushB:{hd:[22,26],sh:[30,34],hp:[54,52],el:[32,48],ha:[34,62],kn:[68,62],ft:[82,72],
+  extra:'<rect x="24" y="62" width="22" height="5" rx="2" fill="#3a414c"/>'},
+bridgeA:{hd:[18,66],sh:[28,68],hp:[52,70],el:[30,74],ha:[36,78],kn:[62,58],ft:[68,80]},
+bridgeB:{hd:[18,66],sh:[28,68],hp:[52,54],el:[30,74],ha:[36,78],kn:[64,52],ft:[68,80]},
+raiseA:{hd:[50,16],sh:[50,27],hp:[50,54],el:[54,38],ha:[55,48],el2:[46,38],ha2:[45,48],kn:[50,68],ft:[50,83]},
+raiseB:{hd:[50,16],sh:[50,27],hp:[50,54],el:[62,26],ha:[72,25],el2:[38,26],ha2:[28,25],kn:[50,68],ft:[50,83]},
+plank:{hd:[20,52],sh:[30,56],hp:[56,60],el:[30,66],ha:[28,76],kn:[70,66],ft:[84,74]},
+sideplank:{hd:[22,44],sh:[32,50],hp:[56,58],el:[36,62],ha:[38,76],kn:[70,66],ft:[84,74],
+  extra:'<line x1="34" y1="30" x2="30" y2="44" stroke="currentColor" stroke-width="0"/>'},
+birddogA:{hd:[26,42],sh:[34,48],hp:[60,50],el:[32,58],ha:[30,70],kn:[66,60],ft:[64,72],kn2:[70,58],ft2:[70,72]},
+birddogB:{hd:[24,40],sh:[34,46],hp:[60,50],el:[22,44],ha:[10,42],kn:[74,48],ft:[88,46],kn2:[66,60],ft2:[64,72],
+  extra:''},
+deadbugA:{hd:[18,70],sh:[28,72],hp:[54,74],el:[30,60],ha:[32,50],kn:[58,60],ft:[64,64]},
+deadbugB:{hd:[18,70],sh:[28,72],hp:[54,74],el:[16,62],ha:[8,54],kn:[70,68],ft:[84,66]},
+facepullA:{hd:[46,18],sh:[47,29],hp:[46,56],el:[58,32],ha:[70,30],kn:[48,69],ft:[50,83],
+  extra:'<circle cx="84" cy="26" r="3" fill="#3a414c"/><line x1="84" y1="10" x2="84" y2="26" stroke="#3a414c" stroke-width="3"/>'},
+facepullB:{hd:[46,18],sh:[47,29],hp:[46,56],el:[60,24],ha:[52,22],kn:[48,69],ft:[50,83],
+  extra:'<circle cx="84" cy="26" r="3" fill="#3a414c"/><line x1="84" y1="10" x2="84" y2="26" stroke="#3a414c" stroke-width="3"/>'},
+pallofA:{hd:[46,16],sh:[46,27],hp:[46,54],el:[54,34],ha:[54,40],kn:[46,68],ft:[46,83],
+  extra:'<line x1="86" y1="14" x2="86" y2="60" stroke="#3a414c" stroke-width="3"/>'},
+pallofB:{hd:[46,16],sh:[46,27],hp:[46,54],el:[58,32],ha:[68,32],kn:[46,68],ft:[46,83],
+  extra:'<line x1="86" y1="14" x2="86" y2="60" stroke="#3a414c" stroke-width="3"/>'},
+curlA:{hd:[50,16],sh:[50,27],hp:[50,54],el:[52,40],ha:[52,50],kn:[52,68],ft:[52,83],kn2:[48,68],ft2:[46,83]},
+curlB:{hd:[50,16],sh:[50,27],hp:[50,54],el:[52,40],ha:[52,50],kn:[52,68],ft:[58,72],kn2:[48,68],ft2:[46,83]},
+extA:{hd:[42,24],sh:[44,34],hp:[42,58],el:[50,44],ha:[46,52],kn:[54,64],ft:[54,80],
+  extra:'<line x1="38" y1="24" x2="38" y2="60" stroke="#3a414c" stroke-width="4"/>'},
+extB:{hd:[42,24],sh:[44,34],hp:[42,58],el:[50,44],ha:[46,52],kn:[54,64],ft:[70,60],
+  extra:'<line x1="38" y1="24" x2="38" y2="60" stroke="#3a414c" stroke-width="4"/>'},
+calfA:{hd:[50,16],sh:[50,27],hp:[50,54],el:[46,40],ha:[40,44],kn:[50,68],ft:[50,83],
+  extra:'<rect x="42" y="83" width="18" height="4" fill="#3a414c"/>'},
+calfB:{hd:[50,12],sh:[50,23],hp:[50,50],el:[46,36],ha:[40,40],kn:[50,64],ft:[50,79],
+  extra:'<rect x="42" y="83" width="18" height="4" fill="#3a414c"/>'},
+abdA:{hd:[50,16],sh:[50,27],hp:[50,54],el:[52,40],ha:[53,50],kn:[52,68],ft:[52,83],kn2:[48,68],ft2:[46,83]},
+abdB:{hd:[50,16],sh:[50,27],hp:[50,54],el:[52,40],ha:[53,50],kn:[64,64],ft:[74,74],kn2:[48,68],ft2:[46,83]},
+ohpA:{hd:[46,22],sh:[46,32],hp:[45,58],el:[56,30],ha:[56,22],kn:[56,64],ft:[58,82],
+  extra:'<line x1="41" y1="22" x2="41" y2="60" stroke="#3a414c" stroke-width="4"/>'},
+ohpB:{hd:[46,22],sh:[46,32],hp:[45,58],el:[54,20],ha:[54,8],kn:[56,64],ft:[58,82],
+  extra:'<line x1="41" y1="22" x2="41" y2="60" stroke="#3a414c" stroke-width="4"/>'},
+flyA:{hd:[44,22],sh:[45,32],hp:[44,58],el:[58,30],ha:[68,34],kn:[56,64],ft:[58,82],
+  extra:'<line x1="40" y1="22" x2="40" y2="60" stroke="#3a414c" stroke-width="4"/>'},
+flyB:{hd:[44,22],sh:[45,32],hp:[44,58],el:[56,34],ha:[60,42],kn:[56,64],ft:[58,82],
+  extra:'<line x1="40" y1="22" x2="40" y2="60" stroke="#3a414c" stroke-width="4"/>'},
+hingeA:{hd:[50,14],sh:[50,25],hp:[50,52],el:[52,38],ha:[52,50],kn:[50,67],ft:[50,83]},
+hingeB:{hd:[66,36],sh:[62,40],hp:[44,52],el:[64,50],ha:[64,62],kn:[46,67],ft:[48,83]},
+situpA:{hd:[18,70],sh:[28,72],hp:[54,74],el:[24,66],ha:[20,68],kn:[62,62],ft:[70,80]},
+situpB:{hd:[36,54],sh:[40,60],hp:[54,74],el:[34,54],ha:[30,58],kn:[62,62],ft:[70,80]},
+kickA:{hd:[30,32],sh:[36,40],hp:[52,50],el:[34,50],ha:[32,62],kn:[58,62],ft:[56,76],kn2:[62,58],ft2:[62,74]},
+kickB:{hd:[30,32],sh:[36,40],hp:[52,50],el:[34,50],ha:[32,62],kn:[68,52],ft:[82,54],kn2:[62,58],ft2:[62,74]},
+jumpA:{hd:[50,20],sh:[50,30],hp:[50,54],el:[46,44],ha:[42,52],kn:[52,66],ft:[50,83]},
+jumpB:{hd:[50,8],sh:[50,18],hp:[50,40],el:[58,10],ha:[62,4],kn:[54,52],ft:[50,64]},
+lungeA:{hd:[50,14],sh:[50,25],hp:[50,52],el:[52,38],ha:[53,49],kn:[50,67],ft:[50,83]},
+lungeB:{hd:[46,22],sh:[46,32],hp:[44,56],el:[48,44],ha:[48,54],kn:[58,66],ft:[58,83],kn2:[36,72],ft2:[28,83]},
+twistA:{hd:[34,50],sh:[38,56],hp:[52,72],el:[46,54],ha:[54,50],kn:[62,60],ft:[70,78]},
+twistB:{hd:[34,50],sh:[38,56],hp:[52,72],el:[28,58],ha:[20,60],kn:[62,60],ft:[70,78]},
+legraiseA:{hd:[18,70],sh:[28,72],hp:[54,74],el:[30,76],ha:[36,78],kn:[66,74],ft:[80,74]},
+legraiseB:{hd:[18,70],sh:[28,72],hp:[54,74],el:[30,76],ha:[36,78],kn:[58,58],ft:[62,44]}
+};
+function exFig(key,statyczne){
+  const a=POSES[key+'A']||POSES[key], b=POSES[key+'B'];
+  if(!a) return '';
+  if(statyczne||!b){
+    return '<svg viewBox="0 0 106 92" width="150" role="img" aria-label="pozycja ćwiczenia"><g>'+GROUND+fig(a,'#e8a13d')+'</g><text x="53" y="12" fill="#9aa3ad" font-size="8" text-anchor="middle">utrzymaj pozycję</text></svg>';
+  }
+  return '<svg viewBox="0 0 236 92" width="300" role="img" aria-label="pozycja startowa i końcowa">'+
+    '<g>'+GROUND+fig(a,'#8b94a0')+'</g>'+
+    '<g transform="translate(130,0)">'+GROUND+fig(b,'#e8a13d')+'</g>'+
+    '<path d="M104 46h22m-7-6 7 6-7 6" stroke="#e8a13d" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
+    '<text x="53" y="12" fill="#9aa3ad" font-size="8" text-anchor="middle">start</text>'+
+    '<text x="183" y="12" fill="#9aa3ad" font-size="8" text-anchor="middle">koniec</text></svg>';
+}
+
+/* ============ BIBLIOTEKA ĆWICZEŃ ============ */
+/* safety: safe | warn | block; typ: w = ciężar+powtórzenia, r = same powtórzenia, t = czas (sekundy) */
+const EX=[
+{id:'suwnica',nazwa:'Suwnica',en:'leg press',partia:'nogi',sprzet:['s'],safety:'warn',typ:'w',fig:'legpress',st:{m:0.6},
+ poz:'Usiądź głęboko, plecy i miednica dociśnięte do oparcia. Stopy na platformie na szerokość bioder, całe stopy przylegają, palce lekko na zewnątrz.',
+ ruch:'Wypchnij platformę do prawie pełnego wyprostu kolan (nie blokuj ich do końca). Opuszczaj powoli, 2-3 sekundy, tylko do momentu, w którym miednica jeszcze leży płasko na oparciu.',
+ odd:'Wdech przy opuszczaniu, wydech przy wypychaniu.',
+ blad:'Zbyt głębokie opuszczanie: miednica odrywa się od oparcia i lędźwie wchodzą w zgięcie pod obciążeniem.',
+ wsk:'Lędźwie i miednica dociśnięte do oparcia przez cały ruch. Skróć zakres, zanim miednica zacznie się podwijać.'},
+{id:'przysiad-krzeslo',nazwa:'Przysiad do krzesła z gumą',en:'box squat / banded squat',partia:'nogi',sprzet:['d'],safety:'warn',typ:'w',fig:'squatChair',stDom:'sama masa ciała; gdy 15 powtórzeń robi się łatwe, stań na gumie średniej i trzymaj końce przy barkach',
+ poz:'Stań przed krzesłem, stopy na szerokość bioder, palce lekko na zewnątrz. Ramiona wyciągnięte w przód dla równowagi (albo końce gumy przy barkach).',
+ ruch:'Prowadź biodra w tył i w dół, jakbyś siadał, aż pośladki dotkną krzesła. Nie klapnij, tylko dotknij i od razu wstań, wciskając stopy w podłogę.',
+ odd:'Wdech przy siadaniu, wydech przy wstawaniu.',
+ blad:'Zaokrąglanie pleców przy siadaniu i "klapnięcie" na krzesło zamiast kontrolowanego zejścia.',
+ wsk:'Neutralny odcinek lędźwiowy, klatka otwarta, nie schodź poniżej zakresu, w którym trzymasz proste plecy.'},
+{id:'sciaganie-drazka',nazwa:'Ściąganie drążka wyciągu górnego',en:'lat pulldown',partia:'plecy',sprzet:['s'],safety:'safe',typ:'w',fig:'pull',st:{m:0.4},
+ poz:'Usiądź, uda zablokowane pod wałkiem, chwyt nieco szerzej niż barki. Wyprostuj ramiona, poczuj rozciągnięcie pleców.',
+ ruch:'Najpierw ściągnij łopatki w dół, potem przyciągnij drążek do górnej części klatki, prowadząc łokcie w dół i lekko do tyłu. Wróć powoli do pełnego wyprostu ramion.',
+ odd:'Wydech przy ściąganiu, wdech przy powrocie.',
+ blad:'Odchylanie tułowia mocno w tył i szarpanie ciężaru zamiast pracy pleców.',
+ wsk:'Tułów stabilny, lekkie odchylenie maks. 10-15 stopni. Bez bujania lędźwiami.'},
+{id:'sciaganie-gumy-gora',nazwa:'Ściąganie gumy zaczepionej u góry',en:'band pulldown',partia:'plecy',sprzet:['d'],safety:'safe',typ:'w',fig:'pull',stDom:'guma średnia (opór ok. 15-25 kg); zaczep stabilnie u góry drzwi',
+ poz:'Zaczep gumę u góry (kotwica na drzwiach albo solidny hak). Klęknij lub usiądź twarzą do zaczepu, ramiona wyciągnięte w górę, guma lekko napięta już na starcie.',
+ ruch:'Ściągnij końce gumy do górnej części klatki, prowadząc łokcie w dół wzdłuż tułowia. Zatrzymaj na sekundę, wróć powoli do góry.',
+ odd:'Wydech przy ściąganiu, wdech przy powrocie.',
+ blad:'Wzruszanie barkami do uszu i praca samymi rękami.',
+ wsk:'Ściągnij łopatki w dół zanim zaczniesz ruch. Tułów pionowo, bez bujania.'},
+{id:'wyciskanie-maszyna',nazwa:'Wyciskanie siedząc na maszynie',en:'seated chest press',partia:'klatka',sprzet:['s'],safety:'safe',typ:'w',fig:'press',st:{m:0.3},
+ poz:'Usiądź tak, żeby uchwyty były na wysokości środka klatki. Plecy i głowa przylegają do oparcia, stopy płasko na podłodze.',
+ ruch:'Wypchnij uchwyty przed siebie do prawie pełnego wyprostu łokci. Wracaj powoli, aż poczujesz lekkie rozciągnięcie klatki, bez uciekania łokci mocno za plecy.',
+ odd:'Wydech przy wypychaniu, wdech przy powrocie.',
+ blad:'Mostkowanie: odrywanie lędźwi od oparcia, żeby wycisnąć więcej.',
+ wsk:'Lędźwie dociśnięte do oparcia przez cały ruch. Jak musisz mostkować, ciężar jest za duży.'},
+{id:'pompki-podwyzszenie',nazwa:'Pompki na podwyższeniu',en:'incline push-up',partia:'klatka',sprzet:['d'],safety:'safe',typ:'r',fig:'push',stDom:'wysokość blatu kuchennego; im niższe podparcie, tym ciężej — schodź stopniowo (blat → sofa → podłoga)',
+ poz:'Dłonie na stabilnym podwyższeniu (blat, komoda) nieco szerzej niż barki. Ciało w jednej linii od głowy do pięt, brzuch i pośladki napięte.',
+ ruch:'Ugnij łokcie i opuść klatkę do podwyższenia, łokcie pod kątem ok. 45 stopni od tułowia. Wypchnij się do wyprostu ramion, nie gubiąc linii ciała.',
+ odd:'Wdech przy opuszczaniu, wydech przy wypychaniu.',
+ blad:'Opadające biodra: lędźwie zapadają się w przeprost.',
+ wsk:'Napnij brzuch i pośladki jak w planku, biodra w linii z barkami przez cały ruch.'},
+{id:'hip-thrust',nazwa:'Hip thrust na maszynie / z obciążeniem',en:'hip thrust',partia:'pośladki',sprzet:['s'],safety:'warn',typ:'w',fig:'bridge',st:{m:0.5},
+ poz:'Górna część pleców oparta o ławkę lub siedzisko maszyny, ciężar na biodrach, stopy płasko na podłodze na szerokość bioder, kolana zgięte ok. 90 stopni.',
+ ruch:'Wypchnij biodra w górę siłą pośladków do linii kolano-biodro-bark. Zatrzymaj 1 sekundę na górze, opuść powoli, nie kładąc ciężaru całkiem na podłodze.',
+ odd:'Wydech przy unoszeniu, wdech przy opuszczaniu.',
+ blad:'Przeprost lędźwi na górze: wypychanie brzucha do sufitu zamiast napięcia pośladków.',
+ wsk:'Kończ ruch napięciem pośladków, nie przeprostem lędźwi. Żebra ściągnięte w dół, podwiń lekko miednicę na górze.'},
+{id:'glute-bridge-guma',nazwa:'Glute bridge z gumą nad kolanami',en:'glute bridge',partia:'pośladki',sprzet:['d'],safety:'safe',typ:'r',fig:'bridge',stDom:'guma średnia nad kolanami; bez gumy, jeśli 15 powtórzeń jest jeszcze trudne',
+ poz:'Leżenie na plecach, kolana zgięte, stopy płasko na podłodze blisko pośladków, guma nad kolanami. Ramiona wzdłuż tułowia.',
+ ruch:'Unieś biodra napinając pośladki i cały czas rozpychając gumę kolanami na zewnątrz. Góra ruchu to linia kolano-biodro-bark. Zatrzymaj 1-2 sekundy, opuść powoli.',
+ odd:'Wydech przy unoszeniu, wdech przy opuszczaniu.',
+ blad:'Przeprost lędźwi zamiast pracy pośladków na górze ruchu.',
+ wsk:'Góra ruchu = linia kolano-biodro-bark. Ani centymetra wyżej.'},
+{id:'wznosy-hantle',nazwa:'Wznosy bokiem hantli siedząc z podparciem',en:'seated lateral raise',partia:'barki',sprzet:['s'],safety:'safe',typ:'w',fig:'raise',st:{kg:5},
+ poz:'Siad na ławce z oparciem, plecy przylegają, hantle w dłoniach wzdłuż tułowia, łokcie minimalnie ugięte.',
+ ruch:'Unieś ramiona bokiem do wysokości barków, prowadząc ruch łokciami, nie dłońmi. Zatrzymaj moment na górze, opuść powoli, 2-3 sekundy.',
+ odd:'Wydech przy unoszeniu, wdech przy opuszczaniu.',
+ blad:'Bujanie tułowiem i podrzucanie ciężaru biodrami.',
+ wsk:'Plecy cały czas przy oparciu. Podparcie właśnie po to, żeby lędźwie nie pracowały.'},
+{id:'wznosy-guma',nazwa:'Wznosy bokiem z gumą',en:'band lateral raise',partia:'barki',sprzet:['d'],safety:'safe',typ:'w',fig:'raise',stDom:'guma lekka; barki nie lubią dużego oporu w tym ruchu',
+ poz:'Stań obiema stopami na środku gumy, końce w dłoniach wzdłuż tułowia, łokcie minimalnie ugięte, brzuch napięty.',
+ ruch:'Unieś ramiona bokiem do wysokości barków, opuść powoli. Ruch prowadzi łokieć, dłoń jest tylko przedłużeniem.',
+ odd:'Wydech przy unoszeniu, wdech przy opuszczaniu.',
+ blad:'Odchylanie tułowia w tył przy zmęczeniu.',
+ wsk:'Napnij brzuch, żebra w dół, tułów pionowo. Lżejsza guma zamiast wyginania się.'},
+{id:'wioslowanie-maszyna',nazwa:'Wiosłowanie na maszynie z podparciem klatki',en:'chest supported row',partia:'plecy',sprzet:['s'],safety:'safe',typ:'w',fig:'row',st:{m:0.35},
+ poz:'Klatka oparta o poduszkę maszyny, stopy stabilnie na podpórkach, ramiona wyciągnięte do uchwytów.',
+ ruch:'Przyciągnij uchwyty do siebie, zaczynając od ściągnięcia łopatek, łokcie blisko tułowia. Zatrzymaj 1 sekundę przy klatce, wróć powoli do pełnego wyprostu.',
+ odd:'Wydech przy przyciąganiu, wdech przy powrocie.',
+ blad:'Odrywanie klatki od podparcia i szarpanie ciężaru.',
+ wsk:'Klatka przyklejona do podparcia przez cały ruch. To ono zdejmuje pracę z lędźwi.'},
+{id:'wioslowanie-guma-siad',nazwa:'Wiosłowanie gumą w siadzie',en:'seated band row',partia:'plecy',sprzet:['d'],safety:'safe',typ:'w',fig:'row',stDom:'guma średnia zaczepiona o stopy; złap bliżej stóp = większy opór',
+ poz:'Siad na podłodze, nogi wyprostowane z lekkim ugięciem kolan, guma zaczepiona o środek stóp, plecy proste, tułów pionowo.',
+ ruch:'Przyciągnij końce gumy do brzucha, ściągając łopatki i prowadząc łokcie przy tułowiu. Zatrzymaj 1 sekundę, wróć powoli, nie garbiąc się.',
+ odd:'Wydech przy przyciąganiu, wdech przy powrocie.',
+ blad:'Zaokrąglanie pleców i bujanie tułowiem w przód-tył.',
+ wsk:'Tułów pionowo, proste plecy. Ruch robią ramiona i łopatki, nie kręgosłup.'},
+{id:'leg-curl',nazwa:'Uginanie nóg na maszynie',en:'leg curl',partia:'tył uda',sprzet:['s'],safety:'safe',typ:'w',fig:'curl',st:{m:0.25},
+ poz:'Ułóż się na maszynie (leżąc lub siedząc) tak, żeby oś obrotu maszyny była na wysokości kolan. Wałek tuż nad piętami, biodra dociśnięte.',
+ ruch:'Ugnij kolana, przyciągając pięty w stronę pośladków, płynnie i bez zamachu. Wróć powoli do prawie pełnego wyprostu.',
+ odd:'Wydech przy uginaniu, wdech przy powrocie.',
+ blad:'Unoszenie bioder z siedziska przy za dużym ciężarze.',
+ wsk:'Biodra dociśnięte do maszyny, lędźwie neutralnie. Bez zarzucania ciężarem.'},
+{id:'uginanie-guma',nazwa:'Uginanie nogi z gumą stojąc',en:'standing band leg curl',partia:'tył uda',sprzet:['d'],safety:'safe',typ:'w',fig:'curl',stDom:'guma lekka lub średnia, zaczepiona nisko i o kostkę',
+ poz:'Guma zaczepiona nisko (np. o nogę mebla) i o kostkę roboczej nogi. Stań przodem do zaczepu, przytrzymaj się ściany lub krzesła, brzuch napięty.',
+ ruch:'Ugnij kolano, przyciągając piętę do pośladka, udo pionowo i nieruchomo. Zatrzymaj moment, wróć powoli. Wszystkie powtórzenia jedną nogą, potem zmiana.',
+ odd:'Wydech przy uginaniu, wdech przy powrocie.',
+ blad:'Wyginanie lędźwi w przeprost przy uginaniu nogi.',
+ wsk:'Napnij brzuch i pośladek nogi stojącej, biodra nieruchomo.'},
+{id:'leg-ext',nazwa:'Prostowanie nóg na maszynie',en:'leg extension',partia:'nogi',sprzet:['s'],safety:'safe',typ:'w',fig:'ext',st:{m:0.25},
+ poz:'Siad głęboko na maszynie, plecy przy oparciu, oś obrotu na wysokości kolan, wałek tuż nad kostkami.',
+ ruch:'Wyprostuj kolana do pełnego wyprostu, zatrzymaj 1 sekundę z napięciem ud. Opuszczaj powoli, 2-3 sekundy, bez opuszczania ciężaru na stos.',
+ odd:'Wydech przy prostowaniu, wdech przy opuszczaniu.',
+ blad:'Odrywanie miednicy od siedziska i szarpanie ciężaru.',
+ wsk:'Lędźwie dociśnięte do oparcia, ruch płynny w obie strony.'},
+{id:'prostowanie-guma',nazwa:'Prostowanie nogi z gumą siedząc',en:'seated band leg extension',partia:'nogi',sprzet:['d'],safety:'safe',typ:'w',fig:'ext',stDom:'guma średnia zaczepiona z tyłu o nogę krzesła i o kostkę',
+ poz:'Siad na krześle, plecy proste, guma zaczepiona z tyłu (o tylną nogę krzesła) i o kostkę. Dłonie trzymają brzegi siedziska.',
+ ruch:'Wyprostuj kolano do pełnego wyprostu, zatrzymaj 1 sekundę, wróć powoli. Wszystkie powtórzenia jedną nogą, potem zmiana.',
+ odd:'Wydech przy prostowaniu, wdech przy powrocie.',
+ blad:'Odchylanie się w tył i pomaganie sobie tułowiem.',
+ wsk:'Siedź pionowo, dłonie na krześle dla stabilizacji, pracuje samo kolano.'},
+{id:'odwodzenie-maszyna',nazwa:'Odwodzenie nóg na maszynie',en:'hip abduction',partia:'pośladki',sprzet:['s'],safety:'safe',typ:'w',fig:'abd',st:{m:0.3},
+ poz:'Siad na maszynie, plecy przy oparciu, uda przy poduszkach, stopy na podpórkach.',
+ ruch:'Rozchyl uda na zewnątrz, pokonując opór, do komfortowego zakresu. Zatrzymaj 1 sekundę w rozwarciu, wróć powoli, nie pozwalając ciężarowi ściągnąć nóg z klapnięciem.',
+ odd:'Wydech przy rozchylaniu, wdech przy powrocie.',
+ blad:'Odchylanie tułowia i szarpanie zamiast płynnej pracy.',
+ wsk:'Plecy przy oparciu, ruch spokojny, zatrzymaj 1 s w rozwarciu.'},
+{id:'odwodzenie-guma',nazwa:'Odwodzenie nogi z gumą',en:'band hip abduction',partia:'pośladki',sprzet:['d'],safety:'safe',typ:'w',fig:'abd',stDom:'guma lekka nad kostkami lub średnia nad kolanami',
+ poz:'Guma nad kostkami (trudniej) lub nad kolanami (łatwiej). Stań bokiem do ściany i przytrzymaj się jej, ciężar na nodze bliżej ściany.',
+ ruch:'Odwiedź zewnętrzną nogę w bok, stopa równolegle do podłogi, tułów nieruchomo. Wróć powoli. Alternatywa: kroki w bok z gumą w półprzysiadzie.',
+ odd:'Wydech przy odwodzeniu, wdech przy powrocie.',
+ blad:'Pochylanie tułowia w przeciwną stronę, żeby unieść nogę wyżej.',
+ wsk:'Tułów pionowo i nieruchomo. Niższy, czysty ruch jest lepszy niż wysoki z wygięciem.'},
+{id:'face-pull-wyciag',nazwa:'Face pull na wyciągu',en:'cable face pull',partia:'barki',sprzet:['s'],safety:'safe',typ:'w',fig:'facepull',st:{m:0.15},
+ poz:'Lina na wyciągu ustawiona na wysokości twarzy. Złap końce nachwytem, zrób krok w tył i lekki wykrok dla stabilności, ramiona wyciągnięte.',
+ ruch:'Przyciągnij końce liny do wysokości uszu, rozciągając linę na boki, łokcie szeroko i wysoko. Zatrzymaj 1 sekundę ze ściągniętymi łopatkami, wróć powoli.',
+ odd:'Wydech przy przyciąganiu, wdech przy powrocie.',
+ blad:'Ciągnięcie do klatki z łokciami przy tułowiu (robi się z tego wiosłowanie).',
+ wsk:'Tułów pionowo, lekki wykrok dla stabilności, brzuch napięty.'},
+{id:'face-pull-guma',nazwa:'Face pull z gumą',en:'band face pull',partia:'barki',sprzet:['d'],safety:'safe',typ:'w',fig:'facepull',stDom:'guma lekka zaczepiona na wysokości twarzy',
+ poz:'Guma zaczepiona na wysokości twarzy (góra drzwi). Złap końce, odejdź do lekkiego napięcia, lekki wykrok.',
+ ruch:'Przyciągnij końce gumy do wysokości uszu, rozciągając ją na boki, łokcie szeroko i wysoko. Zatrzymaj 1 sekundę, wróć powoli.',
+ odd:'Wydech przy przyciąganiu, wdech przy powrocie.',
+ blad:'Odchylanie tułowia w tył pod koniec serii.',
+ wsk:'Stój stabilnie, żebra w dół, bez przeprostu lędźwi.'},
+{id:'ohp-maszyna',nazwa:'Wyciskanie nad głowę siedząc na maszynie',en:'seated machine shoulder press',partia:'barki',sprzet:['s'],safety:'warn',typ:'w',fig:'ohp',st:{m:0.2},
+ poz:'Siad z pełnym podparciem pleców, uchwyty na wysokości uszu lub odrobinę wyżej, stopy płasko na podłodze.',
+ ruch:'Wypchnij uchwyty nad głowę do prawie pełnego wyprostu łokci. Opuszczaj powoli do wysokości uszu, nie niżej.',
+ odd:'Wydech przy wypychaniu, wdech przy opuszczaniu.',
+ blad:'Odrywanie lędźwi od oparcia i wyginanie się w łuk przy dociskaniu ostatnich powtórzeń.',
+ wsk:'Lędźwie dociśnięte do oparcia przez cały ruch. Jak zaczynasz się wyginać, kończysz serię.'},
+{id:'ohp-guma-siad',nazwa:'Wyciskanie gumy nad głowę siedząc',en:'seated band overhead press',partia:'barki',sprzet:['d'],safety:'warn',typ:'w',fig:'ohp',stDom:'guma lekka lub średnia przełożona pod siedziskiem krzesła',
+ poz:'Siad na krześle z oparciem, guma przełożona pod siedziskiem (albo pod pośladkami), końce trzymane przy barkach, plecy przy oparciu.',
+ ruch:'Wypchnij końce gumy pionowo nad głowę do prawie pełnego wyprostu. Opuszczaj powoli do wysokości barków.',
+ odd:'Wydech przy wypychaniu, wdech przy opuszczaniu.',
+ blad:'Przeprost lędźwi i wypychanie żeber w przód.',
+ wsk:'Plecy przy oparciu krzesła, żebra w dół, brzuch napięty. Siad zamiast stania właśnie chroni lędźwie.'},
+{id:'rozpietki-maszyna',nazwa:'Rozpiętki na maszynie',en:'pec deck / machine fly',partia:'klatka',sprzet:['s'],safety:'safe',typ:'w',fig:'fly',st:{m:0.25},
+ poz:'Siad z plecami i głową przy oparciu, ramiona na poduszkach lub uchwytach na wysokości środka klatki, łokcie lekko ugięte.',
+ ruch:'Złącz ramiona przed sobą półkolistym ruchem, poczuj napięcie klatki, zatrzymaj 1 sekundę. Wracaj powoli do komfortowego rozciągnięcia, nie na siłę maksymalnie w tył.',
+ odd:'Wydech przy łączeniu, wdech przy rozciąganiu.',
+ blad:'Za głębokie rozciąganie w tył i szarpanie ciężaru.',
+ wsk:'Plecy i głowa przy oparciu, ruch płynny, kontrolowany zakres.'},
+{id:'rozpietki-guma',nazwa:'Rozpiętki z gumą',en:'band fly',partia:'klatka',sprzet:['d'],safety:'safe',typ:'w',fig:'fly',stDom:'guma lekka za plecami na wysokości klatki',
+ poz:'Guma zaczepiona za plecami na wysokości klatki (albo przełożona przez plecy). Lekki wykrok, ramiona rozłożone na boki, łokcie minimalnie ugięte.',
+ ruch:'Złącz ramiona przed sobą półkolistym ruchem, dłonie spotykają się na wysokości mostka. Zatrzymaj 1 sekundę, wróć powoli.',
+ odd:'Wydech przy łączeniu, wdech przy powrocie.',
+ blad:'Pochylanie się w przód całym ciałem zamiast pracy klatki.',
+ wsk:'Lekki wykrok, tułów stabilny, brzuch napięty.'},
+{id:'lydki',nazwa:'Wspięcia na palce',en:'calf raise',partia:'łydki',sprzet:['s','d'],safety:'safe',typ:'w',fig:'calf',st:{m:0.4},stDom:'masa ciała na krawędzi stopnia; jedna noga naraz, gdy zrobi się za łatwo',
+ poz:'Palce i śródstopie na krawędzi stopnia, pięty poza nią (dom) albo stopy na platformie suwnicy / maszyny do łydek siedząc (siłownia). Przytrzymaj się dla równowagi.',
+ ruch:'Opuść pięty powoli poniżej poziomu stopnia, poczuj rozciągnięcie łydek. Unieś się maksymalnie na palce, zatrzymaj 1-2 sekundy na górze. Pełny, powolny zakres — to ważne przy sztywniejących stopach.',
+ odd:'Wydech przy unoszeniu, wdech przy opuszczaniu.',
+ blad:'Krótki, sprężynujący ruch bez pełnego zakresu.',
+ wsk:'Na stojąco bez dodatkowego ciężaru na barkach. Z obciążeniem tylko siedząc lub na suwnicy.'},
+{id:'kickback',nazwa:'Wyprost biodra w klęku podpartym',en:'glute kickback',partia:'pośladki',sprzet:['s','d'],safety:'safe',typ:'w',fig:'kick',st:{kg:10},stDom:'guma średnia zaczepiona o stopę i przytrzymana pod dłońmi',
+ poz:'Klęk podparty: dłonie pod barkami, kolana pod biodrami, plecy neutralnie, brzuch napięty. Guma o stopę i pod dłońmi (dom) albo pasek maszyny o kostkę (siłownia).',
+ ruch:'Wypchnij piętę w tył i lekko w górę, prostując nogę do linii tułowia, siłą pośladka. Zatrzymaj 1 sekundę, wróć powoli, nie kładąc kolana. Wszystkie powtórzenia jedną nogą, potem zmiana.',
+ odd:'Wydech przy wypychaniu, wdech przy powrocie.',
+ blad:'Unoszenie nogi ponad linię tułowia kosztem przeprostu lędźwi.',
+ wsk:'Noga kończy w linii pleców, nie wyżej. Brzuch napięty, lędźwie nieruchomo jak w bird dog.'},
+{id:'plank',nazwa:'Plank (deska) na przedramionach',en:'plank',partia:'core',sprzet:['s','d'],safety:'safe',typ:'t',fig:'plank',
+ poz:'Podpór na przedramionach (łokcie pod barkami) i palcach stóp. Ciało w jednej linii od głowy do pięt, wzrok w podłogę.',
+ ruch:'Napnij brzuch i pośladki, podwiń lekko miednicę i po prostu utrzymaj pozycję bez ruchu przez zadany czas. Wersja łatwiejsza: na kolanach.',
+ odd:'Oddychaj spokojnie i równo, nie wstrzymuj powietrza.',
+ blad:'Opadające biodra i zapadnięte lędźwie albo biodra wypchnięte wysoko w górę.',
+ wsk:'Podwiń lekko miednicę, żebra w dół. Krótsze, czyste serie zamiast długiego wisienia na lędźwiach.'},
+{id:'plank-boczny',nazwa:'Plank boczny',en:'side plank',partia:'core',sprzet:['s','d'],safety:'safe',typ:'t',fig:'sideplank',
+ poz:'Leżenie bokiem, podpór na przedramieniu (łokieć pod barkiem), stopy jedna na drugiej lub jedna przed drugą. Wersja łatwiejsza: na kolanach.',
+ ruch:'Unieś biodra tak, żeby ciało tworzyło jedną linię od głowy do stóp, i utrzymaj przez zadany czas. Czas liczysz na każdą stronę osobno.',
+ odd:'Oddychaj spokojnie, nie wstrzymuj powietrza.',
+ blad:'Opadanie bioder do podłogi i skręcanie tułowia.',
+ wsk:'Element wielkiej trójki McGilla. Biodro wypchnięte w górę, ciało w jednej linii od głowy do stóp.'},
+{id:'bird-dog',nazwa:'Ptak-pies',en:'bird dog',partia:'core',sprzet:['s','d'],safety:'safe',typ:'r',fig:'birddog',
+ poz:'Klęk podparty: dłonie pod barkami, kolana pod biodrami, plecy neutralnie (naturalna, mała krzywizna lędźwi), kark w przedłużeniu pleców.',
+ ruch:'Wyciągnij jednocześnie przeciwną rękę w przód i nogę w tył do linii tułowia. Zatrzymaj 2-3 sekundy bez ruchu bioder, wróć powoli. Powtórzenia liczysz na stronę.',
+ odd:'Wydech przy wyciąganiu, wdech przy powrocie.',
+ blad:'Rotacja miednicy i unoszenie nogi ponad linię pleców.',
+ wsk:'Wyobraź sobie szklankę wody na lędźwiach: nie może się wylać. Ruch idzie z bioder i barków, kręgosłup stoi.'},
+{id:'dead-bug',nazwa:'Martwy robak',en:'dead bug',partia:'core',sprzet:['s','d'],safety:'safe',typ:'r',fig:'deadbug',
+ poz:'Leżenie na plecach, ramiona pionowo nad klatką, biodra i kolana zgięte pod kątem 90 stopni (kolana nad biodrami). Lędźwie dociśnięte do podłogi.',
+ ruch:'Opuść powoli przeciwną rękę za głowę i nogę tuż nad podłogę, nie odrywając lędźwi. Wróć i zmień stronę. Powtórzenia liczysz na stronę.',
+ odd:'Wydech przy opuszczaniu kończyn, wdech przy powrocie.',
+ blad:'Odrywanie lędźwi od podłogi przy opuszczaniu nogi.',
+ wsk:'Lędźwie dociśnięte do podłogi przez cały ruch. Jak się odrywają, skróć zakres opuszczania nogi.'},
+{id:'pallof-wyciag',nazwa:'Pallof press na wyciągu',en:'cable pallof press',partia:'core',sprzet:['s'],safety:'safe',typ:'w',fig:'pallof',st:{kg:10},
+ poz:'Stań bokiem do wyciągu ustawionego na wysokości mostka, uchwyt w obu dłoniach przy mostku, stopy na szerokość bioder, kolana minimalnie ugięte.',
+ ruch:'Wypchnij ręce powoli przed siebie i utrzymaj 2-3 sekundy, nie pozwalając ciężarowi obrócić tułowia w stronę wyciągu. Wróć do mostka. Powtórzenia na stronę.',
+ odd:'Oddychaj spokojnie, nie wstrzymuj powietrza przy wypchnięciu.',
+ blad:'Rotacja tułowia w stronę wyciągu przy wypchnięciu.',
+ wsk:'Core antyrotacyjny: cała robota to NIE ruszać tułowiem. Biodra i barki cały czas w jednej linii.'},
+{id:'pallof-guma',nazwa:'Pallof press z gumą',en:'band pallof press',partia:'core',sprzet:['d'],safety:'safe',typ:'w',fig:'pallof',stDom:'guma lekka — liczy się utrzymanie pozycji, nie wielkość oporu',
+ poz:'Guma zaczepiona bokiem na wysokości mostka. Odejdź do wyraźnego napięcia, końce w obu dłoniach przy mostku, stopy na szerokość bioder.',
+ ruch:'Wypchnij ręce powoli przed siebie i utrzymaj 2-3 sekundy, nie pozwalając gumie obrócić tułowia. Wróć do mostka. Powtórzenia na stronę.',
+ odd:'Oddychaj spokojnie, nie wstrzymuj powietrza.',
+ blad:'Uciekanie bioder i skręt tułowia w stronę zaczepu.',
+ wsk:'Stój na szerokość bioder, brzuch napięty, kręgosłup nieruchomo.'},
+/* --- CZARNA LISTA (zablokowane w trybie ostrożnym) --- */
+{id:'martwy-ciag',nazwa:'Martwy ciąg klasyczny / rumuński',en:'deadlift / RDL',partia:'plecy',sprzet:['s'],safety:'block',typ:'w',fig:'hinge',
+ opis:'Unoszenie sztangi z podłogi lub opuszczanie wzdłuż ud z zawiasem biodrowym.',blad:'',
+ wsk:'Zablokowane do wyniku MRI: duże ścinające i kompresyjne obciążenie L4-L5-S1 przy wolnym ciężarze.'},
+{id:'przysiad-sztanga',nazwa:'Przysiad ze sztangą na plecach',en:'back squat',partia:'nogi',sprzet:['s'],safety:'block',typ:'w',fig:'squatChair',
+ opis:'Przysiad z obciążeniem osiowym na barkach.',blad:'',
+ wsk:'Zablokowane do wyniku MRI: bezpośrednia kompresja osiowa kręgosłupa.'},
+{id:'brzuszki',nazwa:'Brzuszki klasyczne / skłony tułowia',en:'sit-up / crunch',partia:'core',sprzet:['s','d'],safety:'block',typ:'r',fig:'situp',
+ opis:'Powtarzane zgięcia odcinka lędźwiowego.',blad:'',
+ wsk:'Zablokowane: cykliczne zgięcie lędźwi obciąża krążki. Zamiast tego: dead bug, bird dog, plank.'},
+{id:'russian-twist',nazwa:'Russian twist z obciążeniem',en:'russian twist',partia:'core',sprzet:['s','d'],safety:'block',typ:'r',fig:'twist',
+ opis:'Rotacje tułowia z ciężarem w siadzie.',blad:'',
+ wsk:'Zablokowane: rotacja zgiętego odcinka lędźwiowego pod obciążeniem. Zamiennik antyrotacyjny: pallof press.'},
+{id:'unoszenie-nog',nazwa:'Unoszenie prostych nóg w zwisie / leżeniu',en:'leg raise',partia:'core',sprzet:['s','d'],safety:'block',typ:'r',fig:'legraise',
+ opis:'Unoszenie wyprostowanych nóg.',blad:'',
+ wsk:'Zablokowane: długa dźwignia prostych nóg mocno ciągnie za odcinek lędźwiowy. Zamiennik: dead bug.'},
+{id:'wioslowanie-opad',nazwa:'Wiosłowanie sztangą w opadzie tułowia',en:'bent-over row',partia:'plecy',sprzet:['s'],safety:'block',typ:'w',fig:'hinge',
+ opis:'Wiosłowanie w pochyleniu bez podparcia.',blad:'',
+ wsk:'Zablokowane: statyczne utrzymanie pochylonego tułowia pod ciężarem. Zamiennik: wiosłowanie z podparciem klatki.'},
+{id:'wykroki-ciezar',nazwa:'Wykroki chodzone z dużym obciążeniem',en:'walking lunge',partia:'nogi',sprzet:['s'],safety:'block',typ:'w',fig:'lunge',
+ opis:'Wykroki w marszu z ciężarem.',blad:'',
+ wsk:'Zablokowane przy dużym ciężarze: obciążenie osiowe + niestabilność. Zamiennik: suwnica, przysiad do krzesła.'},
+{id:'skoki-burpees',nazwa:'Skoki, burpees, box jumpy',en:'jumps / burpees',partia:'nogi',sprzet:['s','d'],safety:'block',typ:'r',fig:'jump',
+ opis:'Ćwiczenia plyometryczne z lądowaniem.',blad:'',
+ wsk:'Zablokowane: udarowa kompresja osiowa przy lądowaniu. Cardio rób na rowerze lub orbitreku w blokach.'}
+];
+const EXBYID={}; EX.forEach(e=>EXBYID[e.id]=e);
+
+/* ============ PLANY A / B / C ============ */
+/* s = ćwiczenie siłownia, d = dom; zakres: powtórzenia albo sekundy (typ t) */
+const PLAN={
+A:{nazwa:'Trening A',lista:[
+ {s:'suwnica',d:'przysiad-krzeslo',serie:3,od:8,do:12},
+ {s:'sciaganie-drazka',d:'sciaganie-gumy-gora',serie:3,od:10,do:15},
+ {s:'wyciskanie-maszyna',d:'pompki-podwyzszenie',serie:3,od:8,do:12},
+ {s:'hip-thrust',d:'glute-bridge-guma',serie:3,od:10,do:15},
+ {s:'wznosy-hantle',d:'wznosy-guma',serie:3,od:12,do:15},
+ {s:'bird-dog',d:'bird-dog',serie:3,od:8,do:10},
+ {s:'plank',d:'plank',serie:3,od:20,do:40},
+ {s:'plank-boczny',d:'plank-boczny',serie:2,od:15,do:30}]},
+B:{nazwa:'Trening B',lista:[
+ {s:'wioslowanie-maszyna',d:'wioslowanie-guma-siad',serie:3,od:10,do:12},
+ {s:'leg-curl',d:'uginanie-guma',serie:3,od:10,do:15},
+ {s:'rozpietki-maszyna',d:'rozpietki-guma',serie:3,od:10,do:15},
+ {s:'odwodzenie-maszyna',d:'odwodzenie-guma',serie:3,od:12,do:15},
+ {s:'face-pull-wyciag',d:'face-pull-guma',serie:3,od:12,do:15},
+ {s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10},
+ {s:'pallof-wyciag',d:'pallof-guma',serie:3,od:8,do:10},
+ {s:'plank-boczny',d:'plank-boczny',serie:2,od:15,do:30}]},
+C:{nazwa:'Trening C',lista:[
+ {s:'suwnica',d:'przysiad-krzeslo',serie:3,od:10,do:15},
+ {s:'sciaganie-drazka',d:'sciaganie-gumy-gora',serie:3,od:10,do:12},
+ {s:'ohp-maszyna',d:'ohp-guma-siad',serie:3,od:8,do:12},
+ {s:'kickback',d:'kickback',serie:3,od:10,do:15},
+ {s:'lydki',d:'lydki',serie:3,od:12,do:15},
+ {s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10},
+ {s:'plank',d:'plank',serie:3,od:20,do:40}]}
+};
+const ROZGRZEWKA=[
+ '5 min lekkie cardio: rower lub orbitrek w spokojnym tempie',
+ 'Mobilizacja bioder: krążenia, przyciąganie kolana w leżeniu (po 8/str.)',
+ 'Mobilizacja odcinka piersiowego: rotacje w klęku podpartym (po 8/str.)',
+ 'Martwy robak (dead bug): 2 x 8/str.',
+ 'Ptak-pies (bird dog): 2 x 8/str.',
+ 'Plank: 2 x 20-30 s'
+];
+const WYCISZENIE=[
+ 'Rozciąganie bioder: wypad z kolanem na podłodze, 2 x 30 s/str.',
+ 'Rozciąganie pośladków: "czwórka" w leżeniu, 2 x 30 s/str.',
+ 'Rozciąganie łydek przy ścianie, 2 x 30 s/str.',
+ 'Pozycja dziecka: 60 s spokojnego oddechu'
+];
+
+/* ============ STAN I ZAPIS ============ */
+const KEY='trening-ledzwie-v1';
+const MAG=(function(){ // localStorage z fallbackiem do pamieci (podglad w sandboxie potrafi go blokowac)
+  try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t');
+       return {get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v),del:k=>localStorage.removeItem(k),trwale:true}; }
+  catch(e){ const m={}; return {get:k=>m[k]||null,set:(k,v)=>m[k]=v,del:k=>delete m[k],trwale:false}; }
+})();
+var S=load();
+function load(){
+  try{const d=JSON.parse(MAG.get(KEY)); if(d&&d.profil) return d;}catch(e){}
+  return {profil:{wzrost:189,waga:103,tryb:'ostrozny'},
+          ust:{wibracje:true,wariant:'s',pokazanoStart:false},
+          sesje:[],aktywna:null,planOverride:null};
+}
+function save(){ try{MAG.set(KEY,JSON.stringify(S));}catch(e){} }
+function plan(){ return S.planOverride||PLAN; }
+function ostrozny(){ return S.profil.tryb==='ostrozny'; }
+function nastepnyTyp(){ return ['A','B','C'][S.sesje.length%3]; }
+function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmtT(sec){ sec=Math.max(0,Math.round(sec)); return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); }
+function dziś(){ return new Date().toISOString().slice(0,10); }
+
+/* ============ SYGNAŁY: WIBRACJE + FALLBACK ============ */
+const WZORY={przerwa:[250],cwiczenie:[220,130,220],cardio:[800]};
+let audioCtx=null;
+function beep(n,dur){
+  try{
+    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    for(let i=0;i<n;i++){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='sine';o.frequency.value=880;o.connect(g);g.connect(audioCtx.destination);
+      const t=audioCtx.currentTime+i*(dur/1000+0.15);
+      g.gain.setValueAtTime(0.001,t);g.gain.linearRampToValueAtTime(0.25,t+0.02);
+      g.gain.linearRampToValueAtTime(0.001,t+dur/1000);
+      o.start(t);o.stop(t+dur/1000+0.05);
+    }
+  }catch(e){}
+}
+function sygnal(typ){
+  const ok=S.ust.wibracje && navigator.vibrate && navigator.vibrate(WZORY[typ]);
+  if(!ok){ // fallback dźwięk + mignięcie (iOS Safari nie wspiera Vibration API)
+    beep(typ==='cwiczenie'?2:1, typ==='cardio'?700:250);
+    document.body.classList.remove('flash'); void document.body.offsetWidth;
+    document.body.classList.add('flash');
+  }
+}
+
+/* ============ JEDEN GLOBALNY TIMER (pasek przyklejony) ============ */
+let TIMER=null,tick=null;
+const stEl=document.getElementById('stickyTimer'),
+      stTime=document.getElementById('stickyTime'),
+      stLabel=document.getElementById('stickyLabel');
+document.getElementById('stickyStop').onclick=()=>stopTimer(true);
+function startTimer(cfg){ // {label, sec (countdown) | up:true, alertAt, sygnal, onEnd}
+  stopTimer(false);
+  TIMER={...cfg,start:Date.now(),alerted:false};
+  stEl.classList.add('show');
+  tick=setInterval(tikTimer,250); tikTimer();
+}
+function tikTimer(){
+  if(!TIMER) return;
+  const el=(Date.now()-TIMER.start)/1000;
+  if(TIMER.up){
+    stTime.textContent=fmtT(el);
+    stLabel.textContent=TIMER.label;
+    if(TIMER.alertAt&&el>=TIMER.alertAt&&!TIMER.alerted){
+      TIMER.alerted=true; sygnal('cardio');
+      stLabel.textContent='⚠ '+TIMER.alertMsg;
+      if(TIMER.onAlert) TIMER.onAlert();
+    }
+  }else{
+    const left=TIMER.sec-el;
+    stTime.textContent=fmtT(left);
+    stLabel.textContent=TIMER.label;
+    if(left<=0){ const s=TIMER.sygnal,cb=TIMER.onEnd; stopTimer(false); sygnal(s); if(cb)cb(); }
+  }
+}
+function stopTimer(manual){
+  if(tick){clearInterval(tick);tick=null;}
+  const t=TIMER; TIMER=null; stEl.classList.remove('show');
+  if(manual&&t&&t.onStop) t.onStop((Date.now()-t.start)/1000);
+}
+
+/* ============ ROUTER ============ */
+const app=document.getElementById('app');
+var ekran='dzis', tmpSesja=null;
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  if(S.aktywna&&b.dataset.tab==='dzis'){ pokaz('trening'); return; }
+  pokaz(b.dataset.tab);
+});
+function pokaz(e){
+  ekran=e;
+  document.querySelectorAll('#tabs button').forEach(b=>
+    b.classList.toggle('on',b.dataset.tab===e||(e==='trening'&&b.dataset.tab==='dzis')));
+  const R={dzis:renderDzis,trening:renderTrening,podsumowanie:renderPodsumowanie,
+           postepy:renderPostepy,biblioteka:renderBiblioteka,ustawienia:renderUstawienia,
+           planedycja:renderPlanEdycja};
+  app.innerHTML='<div class="screen active">'+(R[e]?R[e]():'')+'</div>';
+  window.scrollTo(0,0);
+  if(e==='postepy') rysujWykresy();
+}
+
+/* ============ POMOCNICZE: tag, poprzedni wynik, sugestie ============ */
+function tagHTML(s){
+  return s==='safe'?'<span class="tag safe">bezpieczne</span>'
+       :s==='warn'?'<span class="tag warn">ostrożnie</span>'
+       :'<span class="tag block">zablokowane</span>';
+}
+function zaokr(v){ return Math.max(2.5,Math.round(v/2.5)*2.5); }
+function startText(ex,wariant){
+  if(ex.typ!=='w') return null;
+  if(wariant==='d') return ex.stDom?('Na start: '+ex.stDom+'.'):null;
+  if(!ex.st) return null;
+  const kg=ex.st.kg!=null?ex.st.kg:zaokr((S.profil.waga||100)*ex.st.m);
+  return 'Na start (przy '+(S.profil.waga||'?')+' kg masy cia\u0142a): ok. '+kg+' kg. Pierwsza sesja na RPE 5-6, ma by\u0107 wyra\u017any zapas.';
+}
+function opisHTML(ex){
+  if(!ex.poz) return '<p class="small">'+esc(ex.opis||'')+'</p>';
+  return '<p class="small" style="margin:6px 0"><b>Pozycja:</b> '+esc(ex.poz)+'</p>'+
+         '<p class="small" style="margin:6px 0"><b>Ruch:</b> '+esc(ex.ruch)+'</p>'+
+         '<p class="small" style="margin:6px 0"><b>Oddech:</b> '+esc(ex.odd)+'</p>'+
+         (ex.blad?'<p class="small" style="margin:6px 0"><b>Najcz\u0119stszy b\u0142\u0105d:</b> '+esc(ex.blad)+'</p>':'');
+}
+function spineTip(t){
+  return '<div class="spine-tip"><svg width="14" height="18" viewBox="0 0 14 20">'+
+   [2,6,10,14].map(y=>'<rect x="4" y="'+y+'" width="6" height="3" rx="1.5" fill="#e8a13d"/>').join('')+
+   '</svg><div>'+esc(t)+'</div></div>';
+}
+function ostatnieWpisy(exId,ile){
+  const out=[];
+  for(let i=S.sesje.length-1;i>=0&&out.length<ile;i--){
+    const w=S.sesje[i].wpisy[exId];
+    if(w&&w.length) out.push({sesja:S.sesje[i],serie:w});
+  }
+  return out;
+}
+function poprzedniTekst(ex){
+  const o=ostatnieWpisy(ex.id,1);
+  if(!o.length) return '';
+  const s=o[0].serie.map(x=>{
+    if(ex.typ==='t') return x.p+' s';
+    if(ex.typ==='r') return x.p+' powt.';
+    return (x.c||0)+'×'+x.p;
+  }).join(', ');
+  return 'Poprzednio ('+o[0].sesja.data+'): '+s;
+}
+function sugestiaDlaCwiczenia(ex,slot){
+  if(ex.typ!=='w') return null;
+  const o=ostatnieWpisy(ex.id,2);
+  if(o.length<2) return null;
+  const top=o.every(x=>x.serie.length>=slot.serie&&x.serie.every(s=>s.p>=slot.do&&(s.rpe||10)<=8));
+  if(top) return {kier:'up',txt:'Dwie sesje z górą zakresu przy RPE ≤ 8. Dołóż +2,5-5 kg (siłownia) albo weź mocniejszą gumę (dom).'};
+  return null;
+}
+function sugestiaBolu(){
+  const n=S.sesje.length;
+  if(!n) return null;
+  const ost=S.sesje[n-1];
+  if((ost.bol||0)>=5){
+    const dwaRazy=n>=2&&(S.sesje[n-2].bol||0)>=5;
+    return {dwaRazy,txt:'Po ostatnim treningu ból '+ost.bol+'/10. Zejdź dziś z obciążeniem o 10-20% we wszystkich ćwiczeniach siłowych.'};
+  }
+  return null;
+}
+
+/* ============ EKRAN: DZIŚ ============ */
+function renderDzis(){
+  const typ=nastepnyTyp(), p=plan()[typ], war=S.ust.wariant;
+  let uw=MAG.trwale?'':'<div class="notice red">Przegl&#261;darka zablokowa&#322;a trwa&#322;y zapis (tryb podgl&#261;du). Dane znikn&#261; po od&#347;wie&#380;eniu &#8212; na telefonie otw&#243;rz plik bezpo&#347;rednio, tam zapis dzia&#322;a.</div>';
+  let h=uw+'<p class="eyebrow">Dziś</p><h1>'+p.nazwa+'</h1>'+
+   '<p class="muted small">Rotacja A → B → C · trening nr '+(S.sesje.length+1)+' · ok. 90 min</p>';
+  if(!S.ust.pokazanoStart){
+    h+='<div class="notice"><b>Zanim zaczniesz.</b> Plan nie zastępuje konsultacji z lekarzem lub fizjoterapeutą. Po otrzymaniu wyniku MRI skonsultuj listę ćwiczeń. Aplikacja startuje w trybie ostrożnym: ćwiczenia obciążające osiowo odcinek lędźwiowy są zablokowane.'+
+     '<div style="margin-top:8px"><button class="btn small" onclick="S.ust.pokazanoStart=true;save();pokaz(\'dzis\')">Rozumiem</button></div></div>';
+  }
+  if(ostrozny()) h+='<p class="tiny muted">🛡 Tryb ostrożny (do wyniku MRI) — aktywny</p>';
+  else h+='<p class="tiny" style="color:var(--warn)">Tryb rozszerzony — lista ćwiczeń skonsultowana z lekarzem/fizjoterapeutą</p>';
+
+  h+='<div class="seg"><button class="'+(war==='s'?'on':'')+'" onclick="S.ust.wariant=\'s\';save();pokaz(\'dzis\')">🏋️ Siłownia</button>'+
+     '<button class="'+(war==='d'?'on':'')+'" onclick="S.ust.wariant=\'d\';save();pokaz(\'dzis\')">🏠 Dom (gumy)</button></div>';
+
+  const bol=sugestiaBolu();
+  if(bol){
+    h+='<div class="suggest down">'+esc(bol.txt)+'</div>';
+    if(bol.dwaRazy) h+='<div class="notice red"><b>Ból ≥ 5/10 drugi raz z rzędu.</b> Zatrzymaj progresję i skonsultuj się z lekarzem lub fizjoterapeutą, zanim wrócisz do pełnych obciążeń.</div>';
+  }
+
+  h+='<div class="card"><h3>Plan na dziś</h3>';
+  p.lista.forEach(slot=>{
+    const ex=EXBYID[war==='s'?slot.s:slot.d];
+    if(ostrozny()&&ex.safety==='block') return;
+    const sug=sugestiaDlaCwiczenia(ex,slot);
+    const st=!ostatnieWpisy(ex.id,1).length?startText(ex,war):null;
+    h+='<div class="exlist-item"><div><div class="nm">'+esc(ex.nazwa)+'</div>'+
+       '<div class="sub">'+slot.serie+' × '+slot.od+'-'+slot.do+(ex.typ==='t'?' s':' powt.')+'</div>'+
+       (st?'<div class="suggest">'+esc(st)+'</div>':'')+
+       (sug?'<div class="suggest">'+esc(sug.txt)+'</div>':'')+
+       '</div>'+tagHTML(ex.safety)+'</div>';
+  });
+  h+='</div>';
+
+  h+='<div class="card sub"><h3>Rozgrzewka · 12-15 min</h3><ol class="small muted" style="margin:4px 0 0;padding-left:20px">'+
+     ROZGRZEWKA.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol></div>';
+  h+='<div class="card sub"><h3>Cardio interwałowe · 20-25 min</h3><p class="small muted">Bloki maks. 12 min z przerwą 2-3 min na rozciąganie łydek i stóp między blokami, żeby nie doprowadzać do sztywnienia. Timer w treningu przypilnuje przerwy sam.</p></div>';
+  h+='<button class="btn" style="margin-top:14px" onclick="startTrening()">Zacznij trening</button>';
+  return h;
+}
+function startTrening(){
+  S.aktywna={typ:nastepnyTyp(),wariant:S.ust.wariant,start:Date.now(),wpisy:{},cardio:[]};
+  save(); pokaz('trening');
+}
+
+/* ============ EKRAN: TRENING W TOKU ============ */
+function renderTrening(){
+  const a=S.aktywna; if(!a) return renderDzis();
+  const p=plan()[a.typ];
+  let h='<p class="eyebrow">Trening w toku · '+fmtT((Date.now()-a.start)/1000)+' od startu</p>'+
+   '<h1>'+p.nazwa+' · '+(a.wariant==='s'?'Siłownia':'Dom')+'</h1>';
+  h+='<div class="card sub"><h3 style="margin-bottom:4px">Jak logowa&#263; serie</h3>'+
+   '<p class="small muted" style="margin:4px 0"><b>kg</b> &#8212; ci&#281;&#380;ar w kilogramach; na gumach wpisz numer gumy (1 = najl&#380;ejsza) albo zostaw puste. Przy &#263;wiczeniu bez obci&#261;&#380;enia po prostu pomi&#324; to pole.</p>'+
+   '<p class="small muted" style="margin:4px 0"><b>RPE</b> &#8212; jak ci&#281;&#380;ka by&#322;a seria, w skali 1-10: <b>6</b> = spory zapas, <b>8</b> = zosta&#322;y 2 powt&#243;rzenia w zapasie, <b>10</b> = ani jednego wi&#281;cej. Na RPE opiera si&#281; progresja, wi&#281;c warto wpisywa&#263;. Wpisanie RPE startuje timer przerwy.</p></div>';
+  h+='<div class="card sub"><details><summary>Rozgrzewka (12-15 min)</summary><ol class="small muted" style="padding-left:20px">'+
+     ROZGRZEWKA.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol></details></div>';
+
+  p.lista.forEach((slot,i)=>{
+    const ex=EXBYID[a.wariant==='s'?slot.s:slot.d];
+    if(ostrozny()&&ex.safety==='block') return;
+    h+=kartaCwiczenia(ex,slot,i);
+  });
+
+  h+=kartaCardio();
+  h+='<div class="card sub"><details><summary>Wyciszenie (5-8 min)</summary><ul class="small muted" style="padding-left:20px">'+
+     WYCISZENIE.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></details></div>';
+  h+='<button class="btn" style="margin-top:12px" onclick="zakonczTrening()">Zakończ trening</button>'+
+     '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Porzucić trening bez zapisu?\')){S.aktywna=null;save();pokaz(\'dzis\')}">Porzuć bez zapisu</button>';
+  return h;
+}
+function kartaCwiczenia(ex,slot,i){
+  const wp=S.aktywna.wpisy[ex.id]||[];
+  const jedn=ex.typ==='t'?'sek.':'powt.';
+  let h='<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">'+
+    '<div><h3 style="margin-bottom:2px">'+esc(ex.nazwa)+'</h3>'+
+    '<div class="tiny muted">'+esc(ex.en)+' · '+esc(ex.partia)+' · cel: '+slot.serie+' × '+slot.od+'-'+slot.do+' '+jedn+'</div></div>'+
+    tagHTML(ex.safety)+'</div>';
+  h+='<div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>';
+  h+=opisHTML(ex);
+  h+=spineTip(ex.wsk);
+  const sug=sugestiaDlaCwiczenia(ex,slot);
+  if(sug) h+='<div class="suggest">'+esc(sug.txt)+'</div>';
+  const prev=poprzedniTekst(ex);
+  if(prev) h+='<p class="tiny muted">'+esc(prev)+'</p>';
+  else{ const st=startText(ex,S.aktywna.wariant); if(st) h+='<div class="suggest">'+esc(st)+'</div>'; }
+
+
+  h+='<div class="sethead"><span>#</span><span>'+(ex.typ==='w'?(S.aktywna.wariant==='d'?'guma/kg':'kg'):'')+'</span><span>'+jedn+'</span><span>RPE</span><span></span></div>';
+  wp.forEach((s,si)=>{
+    h+='<div class="setrow"><span class="n">'+(si+1)+'</span>'+
+      '<input type="number" inputmode="decimal" step="0.5" placeholder="&#8212;" value="'+(s.c??'')+'" '+(ex.typ!=='w'?'disabled style="opacity:.25"':'')+' onchange="ustawSerie(\''+ex.id+'\','+si+',\'c\',this.value)">'+
+      '<input type="number" inputmode="numeric" value="'+(s.p??'')+'" onchange="ustawSerie(\''+ex.id+'\','+si+',\'p\',this.value)">'+
+      '<input type="number" inputmode="numeric" min="1" max="10" placeholder="&#8212;" value="'+(s.rpe??'')+'" onchange="ustawSerie(\''+ex.id+'\','+si+',\'rpe\',this.value)">'+
+      '<button class="del" onclick="usunSerie(\''+ex.id+'\','+si+')">✕</button></div>';
+  });
+  h+='<div class="row2" style="margin-top:8px">'+
+     '<button class="btn small secondary" style="width:100%" onclick="dodajSerie(\''+ex.id+'\')">+ Dodaj serię</button>'+
+     (ex.typ==='t'
+      ?'<button class="btn small secondary" style="width:100%" onclick="timerCwiczenia(\''+ex.id+'\','+slot.do+')">⏱ Start '+slot.do+' s</button>'
+      :'<button class="btn small secondary" style="width:100%" onclick="timerPrzerwy(75)">⏱ Przerwa 75 s</button>')+
+     '</div>';
+  h+='<div class="row2" style="margin-top:6px">'+
+     '<button class="btn small secondary" style="width:100%;font-size:.8rem" onclick="timerPrzerwy(60)">Przerwa 60 s</button>'+
+     '<button class="btn small secondary" style="width:100%;font-size:.8rem" onclick="timerPrzerwy(90)">Przerwa 90 s</button></div>';
+  h+='</div>';
+  return h;
+}
+function dodajSerie(id){
+  const a=S.aktywna; a.wpisy[id]=a.wpisy[id]||[];
+  const ost=a.wpisy[id][a.wpisy[id].length-1];
+  const prev=ostatnieWpisy(id,1);
+  const wz=ost||{c:prev.length?prev[0].serie[0].c:'',p:'',rpe:''};
+  a.wpisy[id].push({c:wz.c,p:'',rpe:''});
+  save(); pokaz('trening');
+}
+function ustawSerie(id,si,pole,v){
+  S.aktywna.wpisy[id][si][pole]=v===''?'':Number(v); save();
+  if(pole==='rpe'&&v!=='') timerPrzerwy(75); // wpisany RPE = seria skończona, rusza przerwa
+}
+function usunSerie(id,si){ S.aktywna.wpisy[id].splice(si,1); save(); pokaz('trening'); }
+function timerPrzerwy(sec){
+  startTimer({label:'Przerwa między seriami',sec,sygnal:'przerwa'});
+}
+function timerCwiczenia(id,sec){
+  startTimer({label:'Ćwiczenie na czas: trzymaj!',sec,sygnal:'cwiczenie',
+    onEnd:()=>{const a=S.aktywna;a.wpisy[id]=a.wpisy[id]||[];a.wpisy[id].push({c:'',p:sec,rpe:''});save();if(ekran==='trening')pokaz('trening');}});
+}
+
+/* ---- cardio ---- */
+function kartaCardio(){
+  const a=S.aktywna;
+  let h='<div class="card"><h3>Cardio interwałowe · 20-25 min</h3>'+
+   '<p class="small muted">Bloki maks. 12 minut. Po 12 min timer da znać: zrób 2-3 min przerwy na rozciąganie łydek i stóp (rolowanie, zgięcia grzbietowe), dopiero potem kolejny blok. Alternatywa w bloku: 2 min szybciej / 2 min spokojnie.</p>';
+  if(a.cardio.length){
+    h+='<p class="small">Zalogowane bloki: '+a.cardio.map(c=>esc(c.rodzaj)+' '+c.min+' min').join(' · ')+'</p>';
+  }
+  h+='<label class="fld"><span>Rodzaj bloku</span><select id="cardioRodzaj"><option>orbitrek</option><option>rower</option><option>bieżnia (marsz)</option><option>inne</option></select></label>';
+  h+='<div class="row2"><button class="btn small secondary" style="width:100%" onclick="startCardio()">▶ Start bloku cardio</button>'+
+     '<button class="btn small secondary" style="width:100%" onclick="przerwaCardio()">🦶 Przerwa na stopy 3 min</button></div>';
+  h+='</div>';
+  return h;
+}
+function startCardio(){
+  const rodzaj=document.getElementById('cardioRodzaj').value;
+  startTimer({label:'Cardio: '+rodzaj+' (stop = zapis bloku)',up:true,alertAt:720,
+    alertMsg:'12 minut! Zrób przerwę na rozciąganie stóp',
+    onStop:(sec)=>{
+      const min=Math.max(1,Math.round(sec/60));
+      S.aktywna.cardio.push({rodzaj,min}); save();
+      sygnal('cardio');
+      if(ekran==='trening') pokaz('trening');
+      setTimeout(()=>{ if(confirm('Blok '+min+' min zapisany. Odpalić 3-minutową przerwę na rozciąganie łydek i stóp?')) przerwaCardio(); },100);
+    }});
+}
+function przerwaCardio(){
+  startTimer({label:'Przerwa: rozciąganie łydek i stóp',sec:180,sygnal:'przerwa'});
+}
+
+/* ---- zakończenie ---- */
+function zakonczTrening(){
+  const a=S.aktywna;
+  const wpisy={};
+  Object.keys(a.wpisy).forEach(id=>{
+    const cz=a.wpisy[id].filter(s=>s.p!==''&&s.p!=null);
+    if(cz.length) wpisy[id]=cz;
+  });
+  tmpSesja={data:dziś(),typ:a.typ,wariant:a.wariant,
+    czas:Math.round((Date.now()-a.start)/60000),wpisy,cardio:a.cardio,
+    samopoczucie:7,bol:0,notatka:''};
+  stopTimer(false);
+  pokaz('podsumowanie');
+}
+
+/* ============ EKRAN: PODSUMOWANIE ============ */
+function tonaz(w){
+  let t=0;
+  Object.keys(w).forEach(id=>{
+    const ex=EXBYID[id]; if(!ex||ex.typ!=='w') return;
+    w[id].forEach(s=>{ t+=(Number(s.c)||0)*(Number(s.p)||0); });
+  });
+  return Math.round(t);
+}
+function renderPodsumowanie(){
+  const s=tmpSesja; if(!s) return renderDzis();
+  const serie=Object.values(s.wpisy).reduce((a,b)=>a+b.length,0);
+  let h='<p class="eyebrow">Podsumowanie</p><h1>'+plan()[s.typ].nazwa+' zrobiony</h1>';
+  h+='<div class="statgrid">'+
+   '<div class="stat"><b>'+s.czas+' min</b><span>czas</span></div>'+
+   '<div class="stat"><b>'+tonaz(s.wpisy)+' kg</b><span>tonaż</span></div>'+
+   '<div class="stat"><b>'+serie+'</b><span>serii</span></div>'+
+   '<div class="stat"><b>'+s.cardio.reduce((a,c)=>a+c.min,0)+' min</b><span>cardio</span></div></div>';
+  h+='<div class="card"><div class="range-wrap"><label>Samopoczucie <output id="oSam">'+s.samopoczucie+'</output>/10</label>'+
+   '<input type="range" min="1" max="10" value="'+s.samopoczucie+'" oninput="tmpSesja.samopoczucie=+this.value;document.getElementById(\'oSam\').textContent=this.value"></div>'+
+   '<div class="range-wrap"><label>Ból kręgosłupa <output id="oBol">'+s.bol+'</output>/10</label>'+
+   '<input type="range" min="0" max="10" value="'+s.bol+'" oninput="tmpSesja.bol=+this.value;document.getElementById(\'oBol\').textContent=this.value"></div>'+
+   '<label class="fld"><span>Notatka: gdzie i kiedy bolało?</span><textarea oninput="tmpSesja.notatka=this.value" placeholder="np. lekkie ciągnięcie w lędźwiach przy 3. serii suwnicy"></textarea></label></div>';
+  h+='<button class="btn" onclick="zapiszSesje()">Zapisz trening</button>';
+  return h;
+}
+function zapiszSesje(){
+  S.sesje.push(tmpSesja);
+  S.aktywna=null; save();
+  const s=tmpSesja; tmpSesja=null;
+  if(s.bol>=5) alert('Zapisano. Ból '+s.bol+'/10 — przy następnej sesji aplikacja zaproponuje zejście z obciążeniem o 10-20%.');
+  pokaz('postepy');
+}
+
+/* ============ EKRAN: POSTĘPY ============ */
+function renderPostepy(){
+  if(!S.sesje.length) return '<p class="eyebrow">Postępy</p><h1>Postępy</h1><div class="card"><p class="muted">Jeszcze pusto. Wykresy pojawią się po pierwszym zapisanym treningu.</p></div>';
+  const cwZlogami=[...new Set(S.sesje.flatMap(s=>Object.keys(s.wpisy)))].filter(id=>EXBYID[id]&&EXBYID[id].typ==='w');
+  let h='<p class="eyebrow">Postępy</p><h1>Postępy</h1>';
+  h+='<div class="card"><h3>Ciężar w ćwiczeniu</h3>'+
+   '<select id="selEx" onchange="rysujWykresy()">'+cwZlogami.map(id=>'<option value="'+id+'">'+esc(EXBYID[id].nazwa)+'</option>').join('')+'</select>'+
+   '<div class="chartbox" id="chEx"></div><p class="tiny muted">Najcięższa seria z każdej sesji.</p></div>';
+  h+='<div class="card"><h3>Tonaż tygodniowy</h3><div class="chartbox" id="chTonaz"></div></div>';
+  h+='<div class="card"><h3>Treningi w tygodniu</h3><div class="chartbox" id="chIle"></div><p class="tiny muted">Cel: 3 na tydzień.</p></div>';
+  h+='<div class="card"><h3>Trend bólu kręgosłupa</h3><div class="chartbox" id="chBol"></div>'+
+   '<p class="tiny muted">Jeśli ból rośnie razem z konkretnym ćwiczeniem, porównaj ten wykres z wykresem ciężaru powyżej.</p></div>';
+  const zNotatka=S.sesje.filter(s=>s.notatka);
+  if(zNotatka.length){
+    h+='<div class="card"><h3>Notatki o bólu</h3>'+zNotatka.slice(-5).reverse().map(s=>
+      '<p class="small"><b>'+s.data+'</b> (ból '+s.bol+'/10): '+esc(s.notatka)+'</p>').join('')+'</div>';
+  }
+  return h;
+}
+function liniowy(pkt,opt){ // pkt: [{x:label,y:val}]
+  const W=Math.max(300,pkt.length*44),H=150,pad=26,maxY=Math.max(opt.maxY||0,...pkt.map(p=>p.y),1);
+  const X=i=>pad+i*( (W-pad-8)/Math.max(1,pkt.length-1) );
+  const Y=v=>H-pad-(v/maxY)*(H-pad-16);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'">';
+  [0,.5,1].forEach(f=>{const y=Y(maxY*f);
+    s+='<line x1="'+pad+'" y1="'+y+'" x2="'+(W-6)+'" y2="'+y+'" stroke="#2e343d"/>'+
+       '<text x="2" y="'+(y+3)+'" fill="#6b7480" font-size="9">'+Math.round(maxY*f)+'</text>';});
+  if(pkt.length>1) s+='<polyline points="'+pkt.map((p,i)=>X(i)+','+Y(p.y)).join(' ')+'" fill="none" stroke="'+opt.kolor+'" stroke-width="2.5"/>';
+  pkt.forEach((p,i)=>{ s+='<circle cx="'+X(i)+'" cy="'+Y(p.y)+'" r="3.5" fill="'+opt.kolor+'"/>'+
+    '<text x="'+X(i)+'" y="'+(H-8)+'" fill="#6b7480" font-size="8" text-anchor="middle">'+p.x+'</text>'; });
+  return s+'</svg>';
+}
+function slupki(pkt,opt){
+  const W=Math.max(300,pkt.length*52),H=150,pad=26,maxY=Math.max(opt.maxY||0,...pkt.map(p=>p.y),1);
+  const bw=Math.min(30,(W-pad)/pkt.length-10);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'">';
+  [0,.5,1].forEach(f=>{const y=H-24-f*(H-46);
+    s+='<line x1="'+pad+'" y1="'+y+'" x2="'+(W-6)+'" y2="'+y+'" stroke="#2e343d"/>'+
+       '<text x="2" y="'+(y+3)+'" fill="#6b7480" font-size="9">'+Math.round(maxY*f)+'</text>';});
+  pkt.forEach((p,i)=>{
+    const x=pad+8+i*((W-pad-12)/pkt.length), hh=(p.y/maxY)*(H-46);
+    s+='<rect x="'+x+'" y="'+(H-24-hh)+'" width="'+bw+'" height="'+Math.max(1,hh)+'" rx="3" fill="'+opt.kolor+'"/>'+
+       '<text x="'+(x+bw/2)+'" y="'+(H-8)+'" fill="#6b7480" font-size="8" text-anchor="middle">'+p.x+'</text>';
+    if(opt.linia!=null) ;
+  });
+  if(opt.linia!=null){const y=H-24-(opt.linia/maxY)*(H-46);
+    s+='<line x1="'+pad+'" y1="'+y+'" x2="'+(W-6)+'" y2="'+y+'" stroke="#5fb878" stroke-dasharray="4 3"/>';}
+  return s+'</svg>';
+}
+function tydzien(d){ // ISO tydzień jako etykieta
+  const dt=new Date(d), on=new Date(dt); on.setDate(dt.getDate()-((dt.getDay()+6)%7));
+  return on.toISOString().slice(5,10);
+}
+function rysujWykresy(){
+  if(!S.sesje.length) return;
+  if(!document.getElementById('chTonaz')) return;
+  const sel=document.getElementById('selEx');
+  if(sel){
+    const id=sel.value;
+    const pkt=S.sesje.filter(s=>s.wpisy[id]).map(s=>({x:s.data.slice(5),
+      y:Math.max(...s.wpisy[id].map(x=>Number(x.c)||0))}));
+    document.getElementById('chEx').innerHTML=liniowy(pkt,{kolor:'#e8a13d'});
+  }
+  const tyg={};
+  S.sesje.forEach(s=>{const t=tydzien(s.data); tyg[t]=tyg[t]||{ton:0,ile:0};
+    tyg[t].ton+=tonaz(s.wpisy); tyg[t].ile++;});
+  const kl=Object.keys(tyg);
+  document.getElementById('chTonaz').innerHTML=slupki(kl.map(k=>({x:k,y:tyg[k].ton})),{kolor:'#e8a13d'});
+  document.getElementById('chIle').innerHTML=slupki(kl.map(k=>({x:k,y:tyg[k].ile})),{kolor:'#5fb878',maxY:4,linia:3});
+  document.getElementById('chBol').innerHTML=liniowy(S.sesje.map(s=>({x:s.data.slice(5),y:s.bol||0})),{kolor:'#d96c5f',maxY:10});
+}
+
+/* ============ EKRAN: BIBLIOTEKA ============ */
+let FIL={partia:'',sprzet:'',safety:''};
+function renderBiblioteka(){
+  const partie=[...new Set(EX.map(e=>e.partia))];
+  let lista=EX.filter(e=>!(ostrozny()&&e.safety==='block'));
+  if(FIL.partia) lista=lista.filter(e=>e.partia===FIL.partia);
+  if(FIL.sprzet) lista=lista.filter(e=>e.sprzet.includes(FIL.sprzet));
+  if(FIL.safety) lista=lista.filter(e=>e.safety===FIL.safety);
+  let h='<p class="eyebrow">Biblioteka</p><h1>Ćwiczenia</h1>';
+  if(ostrozny()) h+='<p class="tiny muted">🛡 Tryb ostrożny: ćwiczenia z czarnej listy są ukryte i nie da się ich dodać do planu.</p>';
+  h+='<div class="filters">'+
+   '<select onchange="FIL.partia=this.value;pokaz(\'biblioteka\')"><option value="">partia: wszystkie</option>'+partie.map(p=>'<option '+(FIL.partia===p?'selected':'')+'>'+p+'</option>').join('')+'</select>'+
+   '<select onchange="FIL.sprzet=this.value;pokaz(\'biblioteka\')"><option value="">sprzęt: wszystko</option><option value="s" '+(FIL.sprzet==='s'?'selected':'')+'>siłownia</option><option value="d" '+(FIL.sprzet==='d'?'selected':'')+'>dom</option></select>'+
+   '<select onchange="FIL.safety=this.value;pokaz(\'biblioteka\')"><option value="">bezpieczeństwo: wszystkie</option><option value="safe" '+(FIL.safety==='safe'?'selected':'')+'>bezpieczne</option><option value="warn" '+(FIL.safety==='warn'?'selected':'')+'>ostrożnie</option>'+(!ostrozny()?'<option value="block" '+(FIL.safety==='block'?'selected':'')+'>zablokowane</option>':'')+'</select></div>';
+  lista.forEach(ex=>{
+    h+='<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">'+
+      '<div><h3 style="margin-bottom:2px">'+esc(ex.nazwa)+'</h3><div class="tiny muted">'+esc(ex.en)+' · '+esc(ex.partia)+' · '+ex.sprzet.map(s=>s==='s'?'siłownia':'dom').join(' / ')+'</div></div>'+
+      tagHTML(ex.safety)+'</div>';
+    if(ex.safety==='block'){ h+=spineTip(ex.wsk); h+='</div>'; return; }
+    h+='<div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>'+opisHTML(ex)+spineTip(ex.wsk);
+    const st=startText(ex,'s')||startText(ex,'d');
+    if(st) h+='<p class="tiny muted">'+esc(st)+'</p>';
+    h+='</div>';
+  });
+  return h;
+}
+
+/* ============ EKRAN: USTAWIENIA ============ */
+function renderUstawienia(){
+  const p=S.profil;
+  let h='<p class="eyebrow">Ustawienia</p><h1>Ustawienia</h1>';
+  h+='<div class="notice">Plan nie zastępuje konsultacji z lekarzem lub fizjoterapeutą. Po otrzymaniu wyniku MRI skonsultuj listę ćwiczeń.</div>';
+  h+='<div class="card"><h3>Profil</h3><div class="row2">'+
+   '<label class="fld"><span>Wzrost (cm)</span><input type="number" value="'+p.wzrost+'" onchange="S.profil.wzrost=+this.value;save()"></label>'+
+   '<label class="fld"><span>Waga startowa (kg)</span><input type="number" step="0.1" value="'+p.waga+'" onchange="S.profil.waga=+this.value;save()"></label></div>'+
+   '<p class="tiny muted">Cel: redukcja masy ciała, poprawa kondycji, wzmocnienie mięśni głębokich tułowia. Ograniczenie: obniżenie krążka L4-L5-S1, poziome ustawienie kości krzyżowej. 3 treningi FBW w tygodniu po ok. 90 min.</p></div>';
+
+  h+='<div class="card"><h3>Tryb bezpieczeństwa</h3>'+
+   '<p class="small muted">Ostrożny blokuje ćwiczenia obciążające osiowo odcinek lędźwiowy (m.in. martwy ciąg, przysiad ze sztangą, brzuszki, skoki) i pilnuje bloków cardio maks. 12 min.</p>'+
+   '<div class="seg"><button class="'+(ostrozny()?'on':'')+'" onclick="zmienTryb(\'ostrozny\')">🛡 Ostrożny (do MRI)</button>'+
+   '<button class="'+(!ostrozny()?'on':'')+'" onclick="zmienTryb(\'rozszerzony\')">Rozszerzony</button></div></div>';
+
+  h+='<div class="card"><h3>Sygnały timerów</h3>'+
+   '<div class="seg"><button class="'+(S.ust.wibracje?'on':'')+'" onclick="S.ust.wibracje=true;save();pokaz(\'ustawienia\')">Wibracje wł.</button>'+
+   '<button class="'+(!S.ust.wibracje?'on':'')+'" onclick="S.ust.wibracje=false;save();pokaz(\'ustawienia\')">Wibracje wył.</button></div>'+
+   '<p class="tiny muted">Wzory: krótka = koniec przerwy, podwójna = koniec ćwiczenia na czas, długa = koniec bloku cardio. Na iPhonie (Safari) wibracje nie działają w przeglądarce, więc aplikacja użyje dźwięku i mignięcia ekranu.</p>'+
+   '<button class="btn small secondary" onclick="sygnal(\'cwiczenie\')">Przetestuj sygnał</button></div>';
+
+  h+='<div class="card"><h3>Plan treningowy</h3><p class="small muted">Podmiana ćwiczeń i zakresów w treningach A/B/C.</p>'+
+   '<button class="btn small secondary" onclick="pokaz(\'planedycja\')">Edytuj plan</button>'+
+   (S.planOverride?' <button class="btn small secondary" onclick="if(confirm(\'Przywrócić domyślny plan?\')){S.planOverride=null;save();pokaz(\'ustawienia\')}">Przywróć domyślny</button>':'')+'</div>';
+
+  h+='<div class="card"><h3>Dane</h3><p class="small muted">Wszystko trzymasz lokalnie na telefonie ('+S.sesje.length+' zapisanych sesji). Rób backup po każdym tygodniu.</p>'+
+   '<div class="row2"><button class="btn small secondary" style="width:100%" onclick="eksport(\'json\')">Eksport JSON</button>'+
+   '<button class="btn small secondary" style="width:100%" onclick="eksport(\'csv\')">Eksport CSV</button></div>'+
+   '<label class="fld" style="margin-top:10px"><span>Import z pliku JSON</span><input type="file" accept=".json" onchange="importuj(this)"></label>'+
+   '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Skasować WSZYSTKIE dane? Tego nie da się cofnąć.\')){MAG.del(KEY);location.reload()}">Wyczyść wszystkie dane</button></div>';
+  return h;
+}
+function zmienTryb(t){
+  if(t==='rozszerzony'&&ostrozny()){
+    if(!confirm('Tryb rozszerzony odblokowuje ćwiczenia z czarnej listy (martwy ciąg, przysiad ze sztangą itd.).\n\nWłącz go dopiero po konsultacji wyniku MRI z lekarzem lub fizjoterapeutą. Potwierdzasz, że taka konsultacja się odbyła?')) return;
+  }
+  S.profil.tryb=t; save(); pokaz('ustawienia');
+}
+function eksport(fmt){
+  let blob,nazwa;
+  if(fmt==='json'){
+    blob=new Blob([JSON.stringify({profil:S.profil,sesje:S.sesje,planOverride:S.planOverride},null,2)],{type:'application/json'});
+    nazwa='trening-backup-'+dziś()+'.json';
+  }else{
+    let csv='data;typ;wariant;cwiczenie;seria;ciezar;powtorzenia_lub_sek;rpe;czas_min;cardio_min;samopoczucie;bol;notatka\n';
+    S.sesje.forEach(s=>{
+      const cm=s.cardio.reduce((a,c)=>a+c.min,0);
+      Object.keys(s.wpisy).forEach(id=>s.wpisy[id].forEach((x,i)=>{
+        csv+=[s.data,s.typ,s.wariant,(EXBYID[id]?EXBYID[id].nazwa:id),i+1,x.c??'',x.p??'',x.rpe??'',s.czas,cm,s.samopoczucie,s.bol,'"'+String(s.notatka||'').replace(/"/g,'""')+'"'].join(';')+'\n';
+      }));
+    });
+    blob=new Blob(['\ufeff'+csv],{type:'text/csv'});
+    nazwa='trening-'+dziś()+'.csv';
+  }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=nazwa; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function importuj(inp){
+  const f=inp.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{
+      const d=JSON.parse(r.result);
+      if(!d.sesje||!d.profil) throw 0;
+      if(confirm('Wczytać backup? Nadpisze '+S.sesje.length+' obecnych sesji danymi z pliku ('+d.sesje.length+' sesji).')){
+        S.profil=d.profil; S.sesje=d.sesje; S.planOverride=d.planOverride||null; save(); pokaz('ustawienia');
+      }
+    }catch(e){ alert('To nie wygląda na poprawny plik backupu.'); } };
+  r.readAsText(f);
+}
+
+/* ============ EKRAN: EDYCJA PLANU ============ */
+function renderPlanEdycja(){
+  const pl=plan();
+  const opcje=(sprzet,wybrane)=>EX
+    .filter(e=>e.sprzet.includes(sprzet)&&!(ostrozny()&&e.safety==='block'))
+    .map(e=>'<option value="'+e.id+'" '+(e.id===wybrane?'selected':'')+'>'+esc(e.nazwa)+(e.safety==='warn'?' ⚠':'')+'</option>').join('');
+  let h='<p class="eyebrow">Ustawienia</p><h1>Edycja planu</h1>'+
+   '<p class="small muted">Ćwiczenia z czarnej listy nie pojawiają się na listach w trybie ostrożnym. Zmiany zapisują się od razu.</p>';
+  ['A','B','C'].forEach(t=>{
+    h+='<div class="card"><h3>'+pl[t].nazwa+'</h3>';
+    pl[t].lista.forEach((slot,i)=>{
+      h+='<div class="card sub" style="padding:10px">'+
+       '<label class="fld"><span>Siłownia</span><select onchange="edytujSlot(\''+t+'\','+i+',\'s\',this.value)">'+opcje('s',slot.s)+'</select></label>'+
+       '<label class="fld"><span>Dom</span><select onchange="edytujSlot(\''+t+'\','+i+',\'d\',this.value)">'+opcje('d',slot.d)+'</select></label>'+
+       '<div class="row2"><label class="fld"><span>Serie</span><input type="number" min="1" max="6" value="'+slot.serie+'" onchange="edytujSlot(\''+t+'\','+i+',\'serie\',+this.value)"></label>'+
+       '<div class="row2"><label class="fld"><span>Od</span><input type="number" value="'+slot.od+'" onchange="edytujSlot(\''+t+'\','+i+',\'od\',+this.value)"></label>'+
+       '<label class="fld"><span>Do</span><input type="number" value="'+slot.do+'" onchange="edytujSlot(\''+t+'\','+i+',\'do\',+this.value)"></label></div></div>'+
+       '<button class="btn small danger" onclick="usunSlot(\''+t+'\','+i+')">Usuń ćwiczenie</button></div>';
+    });
+    h+='<button class="btn small secondary" onclick="dodajSlot(\''+t+'\')">+ Dodaj ćwiczenie</button></div>';
+  });
+  h+='<button class="btn secondary" onclick="pokaz(\'ustawienia\')">← Wróć do ustawień</button>';
+  return h;
+}
+function zapewnijOverride(){
+  if(!S.planOverride) S.planOverride=JSON.parse(JSON.stringify(PLAN));
+  return S.planOverride;
+}
+function edytujSlot(t,i,pole,v){
+  const pl=zapewnijOverride();
+  if((pole==='s'||pole==='d')&&EXBYID[v]&&EXBYID[v].safety==='block'&&ostrozny()){
+    alert('To ćwiczenie jest zablokowane w trybie ostrożnym.'); pokaz('planedycja'); return;
+  }
+  pl[t].lista[i][pole]=v; save();
+}
+function usunSlot(t,i){ const pl=zapewnijOverride(); pl[t].lista.splice(i,1); save(); pokaz('planedycja'); }
+function dodajSlot(t){ const pl=zapewnijOverride(); pl[t].lista.push({s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10}); save(); pokaz('planedycja'); }
+
+/* ============ START ============ */
+setInterval(()=>{ if(ekran==='trening'&&S.aktywna&&!TIMER){ /* odświeżenie zegara nagłówka */ 
+  const e=document.querySelector('.eyebrow'); if(e) e.textContent='Trening w toku · '+fmtT((Date.now()-S.aktywna.start)/1000)+' od startu'; } },5000);
+pokaz(S.aktywna?'trening':'dzis');
+if('serviceWorker' in navigator && location.protocol==='https:'){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>

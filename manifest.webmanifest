@@ -1,0 +1,11 @@
+{
+  "name": "Trening — plan FBW z ochroną lędźwi",
+  "short_name": "Trening",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#14171b",
+  "theme_color": "#14171b",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
