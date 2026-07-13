@@ -21,7 +21,7 @@
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
   font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   font-size:16px; line-height:1.45; height:100%;}
-body{padding-bottom:calc(64px + env(safe-area-inset-bottom));}
+body{padding-bottom:calc(170px + env(safe-area-inset-bottom));}
 body.flash{animation:flashbg .9s ease}
 @keyframes flashbg{0%,100%{background:var(--bg)}30%{background:#4a3510}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -791,7 +791,7 @@ function renderTrening(){
   h+='<div class="card sub"><details><summary>Wyciszenie (5-8 min)</summary><ul class="small muted" style="padding-left:20px">'+
      WYCISZENIE.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></details></div>';
   h+='<button class="btn" style="margin-top:12px" onclick="zakonczTrening()">Zakończ trening</button>'+
-     '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Porzucić trening bez zapisu?\')){S.aktywna=null;save();pokaz(\'dzis\')}">Porzuć bez zapisu</button>';
+     '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Porzucić trening bez zapisu?\')){S.aktywna=null;save();pokaz(\'dzis\')}">Porzuć bez zapisu</button>'+'<div style="height:40px"></div>';
   return h;
 }
 function kartaCwiczenia(ex,slot,i){
