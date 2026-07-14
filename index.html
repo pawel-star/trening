@@ -18,13 +18,25 @@
   --radius:14px;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html.txt-d{font-size:19px} html.txt-b{font-size:22px}
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
   font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   font-size:16px; line-height:1.45; height:100%;}
-body{padding-bottom:calc(170px + env(safe-area-inset-bottom));}
+body{padding-bottom:calc(240px + env(safe-area-inset-bottom));}
 body.flash{animation:flashbg .9s ease}
 @keyframes flashbg{0%,100%{background:var(--bg)}30%{background:#4a3510}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+html.big{font-size:20.5px}
+html.big body{line-height:1.55}
+html.big .tiny{font-size:.9rem}
+html.big .small{font-size:.98rem}
+html.big .eyebrow{font-size:.8rem}
+html.big nav#tabs button{font-size:.78rem}
+html.big nav#tabs svg{width:24px;height:24px}
+html.big .tag{font-size:.8rem}
+html.big input[type=number],html.big select,html.big button{min-height:48px}
+html.big .timerbar .t{font-size:1.9rem}
+html.big #stickyTimer .t{font-size:2rem}
 
 h1,h2,h3{margin:0 0 .4em; font-weight:700; letter-spacing:-.01em}
 h1{font-size:1.5rem} h2{font-size:1.15rem} h3{font-size:1rem}
@@ -506,46 +518,62 @@ const EXBYID={}; EX.forEach(e=>EXBYID[e.id]=e);
 /* s = ćwiczenie siłownia, d = dom; zakres: powtórzenia albo sekundy (typ t) */
 const PLAN={
 A:{nazwa:'Trening A',lista:[
- {s:'suwnica',d:'przysiad-krzeslo',serie:3,od:8,do:12},
- {s:'sciaganie-drazka',d:'sciaganie-gumy-gora',serie:3,od:10,do:15},
- {s:'wyciskanie-maszyna',d:'pompki-podwyzszenie',serie:3,od:8,do:12},
- {s:'hip-thrust',d:'glute-bridge-guma',serie:3,od:10,do:15},
- {s:'wznosy-hantle',d:'wznosy-guma',serie:3,od:12,do:15},
- {s:'bird-dog',d:'bird-dog',serie:3,od:8,do:10},
- {s:'plank',d:'plank',serie:3,od:20,do:40},
- {s:'plank-boczny',d:'plank-boczny',serie:2,od:15,do:30}]},
+ {s:'suwnica',d:'przysiad-krzeslo',serie:3,od:8,do:12,prz:90},
+ {s:'sciaganie-drazka',d:'sciaganie-gumy-gora',serie:3,od:10,do:15,prz:75},
+ {s:'wyciskanie-maszyna',d:'pompki-podwyzszenie',serie:3,od:8,do:12,prz:75},
+ {s:'hip-thrust',d:'glute-bridge-guma',serie:3,od:10,do:15,prz:75},
+ {s:'wznosy-hantle',d:'wznosy-guma',serie:3,od:12,do:15,prz:60},
+ {s:'bird-dog',d:'bird-dog',serie:3,od:8,do:10,prz:45},
+ {s:'plank',d:'plank',serie:3,od:20,do:40,prz:45},
+ {s:'plank-boczny',d:'plank-boczny',serie:2,od:15,do:30,prz:45}]},
 B:{nazwa:'Trening B',lista:[
- {s:'wioslowanie-maszyna',d:'wioslowanie-guma-siad',serie:3,od:10,do:12},
- {s:'leg-curl',d:'uginanie-guma',serie:3,od:10,do:15},
- {s:'rozpietki-maszyna',d:'rozpietki-guma',serie:3,od:10,do:15},
- {s:'odwodzenie-maszyna',d:'odwodzenie-guma',serie:3,od:12,do:15},
- {s:'face-pull-wyciag',d:'face-pull-guma',serie:3,od:12,do:15},
- {s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10},
- {s:'pallof-wyciag',d:'pallof-guma',serie:3,od:8,do:10},
- {s:'plank-boczny',d:'plank-boczny',serie:2,od:15,do:30}]},
+ {s:'wioslowanie-maszyna',d:'wioslowanie-guma-siad',serie:3,od:10,do:12,prz:75},
+ {s:'leg-curl',d:'uginanie-guma',serie:3,od:10,do:15,prz:60},
+ {s:'rozpietki-maszyna',d:'rozpietki-guma',serie:3,od:10,do:15,prz:60},
+ {s:'odwodzenie-maszyna',d:'odwodzenie-guma',serie:3,od:12,do:15,prz:60},
+ {s:'face-pull-wyciag',d:'face-pull-guma',serie:3,od:12,do:15,prz:60},
+ {s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10,prz:45},
+ {s:'pallof-wyciag',d:'pallof-guma',serie:3,od:8,do:10,prz:45},
+ {s:'plank-boczny',d:'plank-boczny',serie:2,od:15,do:30,prz:45}]},
 C:{nazwa:'Trening C',lista:[
- {s:'suwnica',d:'przysiad-krzeslo',serie:3,od:10,do:15},
- {s:'sciaganie-drazka',d:'sciaganie-gumy-gora',serie:3,od:10,do:12},
- {s:'ohp-maszyna',d:'ohp-guma-siad',serie:3,od:8,do:12},
- {s:'kickback',d:'kickback',serie:3,od:10,do:15},
- {s:'lydki',d:'lydki',serie:3,od:12,do:15},
- {s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10},
- {s:'plank',d:'plank',serie:3,od:20,do:40}]}
+ {s:'suwnica',d:'przysiad-krzeslo',serie:3,od:10,do:15,prz:90},
+ {s:'sciaganie-drazka',d:'sciaganie-gumy-gora',serie:3,od:10,do:12,prz:75},
+ {s:'ohp-maszyna',d:'ohp-guma-siad',serie:3,od:8,do:12,prz:75},
+ {s:'kickback',d:'kickback',serie:3,od:10,do:15,prz:60},
+ {s:'lydki',d:'lydki',serie:3,od:12,do:15,prz:60},
+ {s:'dead-bug',d:'dead-bug',serie:3,od:8,do:10,prz:45},
+ {s:'plank',d:'plank',serie:3,od:20,do:40,prz:45}]}
 };
 const ROZGRZEWKA=[
- '5 min lekkie cardio: rower lub orbitrek w spokojnym tempie',
- 'Mobilizacja bioder: krążenia, przyciąganie kolana w leżeniu (po 8/str.)',
- 'Mobilizacja odcinka piersiowego: rotacje w klęku podpartym (po 8/str.)',
- 'Martwy robak (dead bug): 2 x 8/str.',
- 'Ptak-pies (bird dog): 2 x 8/str.',
- 'Plank: 2 x 20-30 s'
+ {nazwa:'Lekkie cardio',czas:300,opis:'Rower lub orbitrek w spokojnym tempie. Tempo „rozmowne”: masz swobodnie oddychać i móc mówić pełnymi zdaniami.'},
+ {nazwa:'Krążenia bioder',czas:60,opis:'Stojąc, dłonie na biodrach, zatocz biodrami szerokie, spokojne koła. Po 10 w każdą stronę. Kolana miękkie.'},
+ {nazwa:'Przyciąganie kolana w leżeniu',czas:90,opis:'Leżenie na plecach, jedna noga zgięta stopą na podłodze. Przyciągnij drugie kolano do klatki i przytrzymaj 3 s. Lędźwie cały czas na podłodze. Po 8 na stronę.'},
+ {nazwa:'Rotacje piersiowe w klęku podpartym',czas:90,opis:'Klęk podparty, jedna dłoń za głową. Otwórz łokieć do sufitu, prowadząc ruch z górnej części pleców, biodra nieruchomo. Wróć łokciem do drugiej ręki. Po 8 na stronę.'},
+ {nazwa:'Dead bug (aktywacja)',czas:120,opis:'2 serie po 8 na stronę, technika jak w bibliotece: lędźwie dociśnięte do podłogi, ruch powolny.'},
+ {nazwa:'Bird dog (aktywacja)',czas:120,opis:'2 serie po 8 na stronę: zatrzymaj 2-3 s, miednica nieruchomo, noga nie wyżej niż linia pleców.'},
+ {nazwa:'Plank (aktywacja)',czas:75,opis:'2 razy 20-30 s. Miednica lekko podwinięta, żebra w dół, spokojny oddech.'}
 ];
-const WYCISZENIE=[
- 'Rozciąganie bioder: wypad z kolanem na podłodze, 2 x 30 s/str.',
- 'Rozciąganie pośladków: "czwórka" w leżeniu, 2 x 30 s/str.',
- 'Rozciąganie łydek przy ścianie, 2 x 30 s/str.',
- 'Pozycja dziecka: 60 s spokojnego oddechu'
-];
+const WYCISZENIE={
+A:[
+ {nazwa:'Zginacze bioder: wypad z kolanem na podłodze',czas:60,opis:'Klęk jednonóż, przednia noga zgięta. Napnij pośladek tylnej nogi i przesuń biodra minimalnie w przód, bez wyginania lędźwi. 30 s na stronę.'},
+ {nazwa:'Czworogłowe uda stojąc',czas:60,opis:'Stojąc przy ścianie, chwyć stopę i przyciągnij piętę do pośladka. Kolana obok siebie, biodro wypchnięte lekko w przód, brzuch napięty. 30 s na stronę.'},
+ {nazwa:'Pośladki: czwórka w leżeniu',czas:60,opis:'Leżenie na plecach, kostka na kolanie drugiej nogi, chwyć udo i przyciągnij do klatki. Głowa i lędźwie na podłodze. 30 s na stronę.'},
+ {nazwa:'Łydki przy ścianie',czas:60,opis:'Wykrok do ściany, tylna noga prosta, pięta w podłodze. Pochyl się do ściany do uczucia rozciągania łydki. 30 s na stronę. Ważne przy sztywniejących stopach.'},
+ {nazwa:'Pozycja dziecka',czas:60,opis:'Klęk, pośladki na piętach, ręce wyciągnięte daleko w przód, czoło przy podłodze. 60 s spokojnego oddechu przeponą.'}],
+B:[
+ {nazwa:'Tył uda w leżeniu (z paskiem/ręcznikiem)',czas:60,opis:'Leżenie na plecach, pasek na stopie, unieś prostą nogę do uczucia rozciągania. Druga noga zgięta, lędźwie na podłodze. 30 s na stronę. Nie rób skłonów na stojąco.'},
+ {nazwa:'Klatka piersiowa w drzwiach',czas:45,opis:'Przedramiona na framudze, łokcie na wysokości barków. Zrób pół kroku w przód do uczucia rozciągania klatki. 30-45 s.'},
+ {nazwa:'Pośladki: czwórka w leżeniu',czas:60,opis:'Jak w treningu A: kostka na kolanie, przyciągnij udo do klatki, lędźwie na podłodze. 30 s na stronę.'},
+ {nazwa:'Łydki przy ścianie',czas:60,opis:'Wykrok do ściany, tylna noga prosta, pięta w podłodze. 30 s na stronę.'},
+ {nazwa:'Pozycja dziecka',czas:60,opis:'60 s spokojnego oddechu, ręce daleko w przód.'}],
+C:[
+ {nazwa:'Zginacze bioder: wypad z kolanem na podłodze',czas:60,opis:'Jak w treningu A: napięty pośladek tylnej nogi, biodra minimalnie w przód, lędźwie neutralnie. 30 s na stronę.'},
+ {nazwa:'Barki: ramię w poprzek klatki',czas:45,opis:'Wyciągnij ramię w poprzek klatki i dociągnij drugim przedramieniem. Bark nisko, nie wzruszaj. 20-30 s na stronę.'},
+ {nazwa:'Kark: ucho do barku',czas:45,opis:'Siedząc lub stojąc, przechyl głowę uchem do barku, druga ręka luźno w dół. Delikatnie, bez dociskania ręką. 20 s na stronę.'},
+ {nazwa:'Łydki przy ścianie',czas:60,opis:'Wykrok do ściany, tylna noga prosta, pięta w podłodze. 30 s na stronę.'},
+ {nazwa:'Pozycja dziecka',czas:60,opis:'60 s spokojnego oddechu.'}]
+};
+
 
 /* ============ STAN I ZAPIS ============ */
 const KEY='trening-ledzwie-v1';
@@ -572,27 +600,43 @@ function dziś(){ return new Date().toISOString().slice(0,10); }
 /* ============ SYGNAŁY: WIBRACJE + FALLBACK ============ */
 const WZORY={przerwa:[250],cwiczenie:[220,130,220],cardio:[800]};
 let audioCtx=null;
-function beep(n,dur){
+function odblokujDzwiek(){ // iOS pozwala na dzwiek tylko po gescie uzytkownika - odblokowujemy przy pierwszym dotknieciu
   try{
     audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+  }catch(e){}
+}
+document.addEventListener('touchend',odblokujDzwiek,{passive:true});
+document.addEventListener('click',odblokujDzwiek);
+function beep(n,dur){
+  try{
+    odblokujDzwiek();
     for(let i=0;i<n;i++){
-      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-      o.type='sine';o.frequency.value=880;o.connect(g);g.connect(audioCtx.destination);
-      const t=audioCtx.currentTime+i*(dur/1000+0.15);
-      g.gain.setValueAtTime(0.001,t);g.gain.linearRampToValueAtTime(0.25,t+0.02);
-      g.gain.linearRampToValueAtTime(0.001,t+dur/1000);
-      o.start(t);o.stop(t+dur/1000+0.05);
+      const t0=audioCtx.currentTime+i*(dur/1000+0.18);
+      [880,1320].forEach(f=>{ // dwa tony naraz = sygnal przebija sie przez halas silowni
+        const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.type='square';o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);
+        g.gain.setValueAtTime(0.001,t0);g.gain.linearRampToValueAtTime(0.4,t0+0.02);
+        g.gain.setValueAtTime(0.4,t0+dur/1000-0.05);g.gain.linearRampToValueAtTime(0.001,t0+dur/1000);
+        o.start(t0);o.stop(t0+dur/1000+0.05);
+      });
     }
   }catch(e){}
 }
 function sygnal(typ){
-  const ok=S.ust.wibracje && navigator.vibrate && navigator.vibrate(WZORY[typ]);
-  if(!ok){ // fallback dźwięk + mignięcie (iOS Safari nie wspiera Vibration API)
-    beep(typ==='cwiczenie'?2:1, typ==='cardio'?700:250);
+  const wib=S.ust.wibracje && navigator.vibrate && navigator.vibrate(WZORY[typ]);
+  if(!wib){
+    beep(typ==='cwiczenie'?2:(typ==='cardio'?3:1), typ==='cardio'?500:400);
     document.body.classList.remove('flash'); void document.body.offsetWidth;
     document.body.classList.add('flash');
   }
 }
+// powrot do karty/przegladarki: przelicz timer i odblokuj dzwiek
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ odblokujDzwiek(); if(TIMER) tikTimer(); if(S.aktywna) trzymajEkran(); } });
+// blokada wygaszania ekranu w trakcie treningu (Wake Lock, iOS 16.4+)
+let wakeLock=null;
+async function trzymajEkran(){ try{ if('wakeLock' in navigator){ wakeLock=await navigator.wakeLock.request('screen'); } }catch(e){} }
+function puscEkran(){ try{ wakeLock&&wakeLock.release(); }catch(e){} wakeLock=null; }
 
 /* ============ JEDEN GLOBALNY TIMER (pasek przyklejony) ============ */
 let TIMER=null,tick=null;
@@ -705,7 +749,11 @@ function sugestiaDlaCwiczenia(ex,slot){
   const o=ostatnieWpisy(ex.id,2);
   if(o.length<2) return null;
   const top=o.every(x=>x.serie.length>=slot.serie&&x.serie.every(s=>s.p>=slot.do&&(s.rpe||10)<=8));
-  if(top) return {kier:'up',txt:'Dwie sesje z górą zakresu przy RPE ≤ 8. Dołóż +2,5-5 kg (siłownia) albo weź mocniejszą gumę (dom).'};
+  if(top){
+    const lastMax=Math.max(0,...o[0].serie.map(s=>Number(s.c)||0));
+    const cel=lastMax?(' Proponuję: '+(lastMax+2.5)+'-'+(lastMax+5)+' kg (ostatnio '+lastMax+' kg).'):' Dołóż +2,5-5 kg albo weź mocniejszą gumę.';
+    return {kier:'up',txt:'Dwie sesje z górą zakresu przy RPE ≤ 8 — czas na progres.'+cel};
+  }
   return null;
 }
 function sugestiaBolu(){
@@ -743,6 +791,14 @@ function renderDzis(){
     if(bol.dwaRazy) h+='<div class="notice red"><b>Ból ≥ 5/10 drugi raz z rzędu.</b> Zatrzymaj progresję i skonsultuj się z lekarzem lub fizjoterapeutą, zanim wrócisz do pełnych obciążeń.</div>';
   }
 
+  h+='<div class="card sub"><details><summary>Dlaczego taki plan? (bird dog, dead bug, maszyny)</summary>'+
+   '<p class="small" style="margin:6px 0">FBW 3 razy w tygodniu daje najwi\u0119kszy tygodniowy wydatek energetyczny przy redukcji i cz\u0119sty bodziec dla mi\u0119\u015bni bez przeci\u0105\u017cania jednej partii.</p>'+
+   '<p class="small" style="margin:6px 0"><b>Bird dog i dead bug to nie zamienniki, tylko para.</b> Dead bug uczy trzyma\u0107 l\u0119d\u017awie doci\u015bni\u0119te przy ruchu n\u00f3g (przednia \u015bciana brzucha), bird dog uczy stabilizowa\u0107 kr\u0119gos\u0142up przy ruchu r\u0105k i n\u00f3g z kl\u0119ku (\u0142a\u0144cuch tylny). Razem z plankiem i plankiem bocznym tworz\u0105 tzw. wielk\u0105 tr\u00f3jk\u0119 McGilla \u2014 standard \u0107wicze\u0144 przy problemach dyskowych, w\u0142a\u015bnie dlatego s\u0105 w ka\u017cdym treningu.</p>'+
+   '<p class="small" style="margin:6px 0"><b>Maszyny zamiast wolnych ci\u0119\u017car\u00f3w</b> \u2014 podparcie plec\u00f3w lub klatki zdejmuje prac\u0119 stabilizacyjn\u0105 z l\u0119d\u017awi, wi\u0119c mo\u017cesz mocno obci\u0105\u017cy\u0107 mi\u0119\u015bnie bez obci\u0105\u017cania kr\u0119gos\u0142upa. Hip thrust zosta\u0142 w planie, bo ruch prowadzi biodro, nie kr\u0119gos\u0142up \u2014 ale ma tag \u201eostro\u017cnie\u201d, bo b\u0142\u0119dem jest przeprost l\u0119d\u017awi na g\u00f3rze. Wskaz\u00f3wka na karcie pilnuje w\u0142a\u015bnie tego.</p>'+
+   '<p class="small" style="margin:6px 0">Po wyniku MRI ca\u0142\u0105 list\u0119 potwierd\u017a z fizjoterapeut\u0105 \u2014 aplikacja jest ostro\u017cna, ale nie zna Twojego wyniku.</p></details></div>';
+  if(S.sesje.length>=24&&(S.sesje.length-(S.ust.rotacjaOd||0))>=24){
+    h+='<div class="notice">Masz za sob\u0105 '+S.sesje.length+' trening\u00f3w na tym uk\u0142adzie. Po ok. 8 tygodniach warto podmieni\u0107 cz\u0119\u015b\u0107 \u0107wicze\u0144 na zamienniki (ta sama partia), \u017ceby bodziec by\u0142 \u015bwie\u017cy: wejd\u017a w Ustawienia \u2192 Edytuj plan albo u\u017cyj \u201eZamie\u0144 na podobne\u201d w treningu. <button class="btn small secondary" onclick="S.ust.rotacjaOd=S.sesje.length;save();pokaz(\'dzis\')">Zrobione / przypomnij za 24 treningi</button></div>';
+  }
   h+='<div class="card"><h3>Plan na dziś</h3>';
   p.lista.forEach(slot=>{
     const ex=EXBYID[war==='s'?slot.s:slot.d];
@@ -759,14 +815,31 @@ function renderDzis(){
   h+='</div>';
 
   h+='<div class="card sub"><h3>Rozgrzewka · 12-15 min</h3><ol class="small muted" style="margin:4px 0 0;padding-left:20px">'+
-     ROZGRZEWKA.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol></div>';
+     ROZGRZEWKA.map(x=>'<li>'+esc(x.nazwa)+'</li>').join('')+'</ol></div>';
   h+='<div class="card sub"><h3>Cardio interwałowe · 20-25 min</h3><p class="small muted">Bloki maks. 12 min z przerwą 2-3 min na rozciąganie łydek i stóp między blokami, żeby nie doprowadzać do sztywnienia. Timer w treningu przypilnuje przerwy sam.</p></div>';
   h+='<button class="btn" style="margin-top:14px" onclick="startTrening()">Zacznij trening</button>';
   return h;
 }
 function startTrening(){
-  S.aktywna={typ:nastepnyTyp(),wariant:S.ust.wariant,start:Date.now(),wpisy:{},cardio:[]};
-  save(); pokaz('trening');
+  const typ=nastepnyTyp(), war=S.ust.wariant, p=plan()[typ];
+  const wpisy={},prz={};
+  p.lista.forEach(slot=>{
+    const ex=EXBYID[war==='s'?slot.s:slot.d];
+    if(!ex||(ostrozny()&&ex.safety==='block')) return;
+    const prev=ostatnieWpisy(ex.id,1);
+    wpisy[ex.id]=Array.from({length:slot.serie},(_,k)=>({
+      c:(ex.typ==='w'&&prev.length)?(prev[0].serie[k]?prev[0].serie[k].c:prev[0].serie[0].c):'',p:'',rpe:''}));
+    prz[ex.id]=slot.prz||75;
+  });
+  S.aktywna={typ,wariant:war,start:Date.now(),wpisy,cardio:[],prz,zamiany:{}};
+  save(); trzymajEkran(); pokaz('trening');
+}
+function przOf(id){ return (S.aktywna&&S.aktywna.prz&&S.aktywna.prz[id])||75; }
+function zamienCwiczenie(i,id){
+  if(!id) return;
+  const a=S.aktywna; a.zamiany[i]=id;
+  if(!a.wpisy[id]){ a.wpisy[id]=[{c:'',p:'',rpe:''},{c:'',p:'',rpe:''},{c:'',p:'',rpe:''}]; a.prz[id]=75; }
+  save(); pokaz('trening',true);
 }
 
 /* ============ EKRAN: TRENING W TOKU ============ */
@@ -777,24 +850,33 @@ function renderTrening(){
    '<h1>'+p.nazwa+' · '+(a.wariant==='s'?'Siłownia':'Dom')+'</h1>';
   h+='<div class="card sub"><h3 style="margin-bottom:4px">Jak logowa&#263; serie</h3>'+
    '<p class="small muted" style="margin:4px 0"><b>kg</b> &#8212; ci&#281;&#380;ar w kilogramach; na gumach wpisz numer gumy (1 = najl&#380;ejsza) albo zostaw puste. Przy &#263;wiczeniu bez obci&#261;&#380;enia po prostu pomi&#324; to pole.</p>'+
-   '<p class="small muted" style="margin:4px 0"><b>RPE</b> &#8212; jak ci&#281;&#380;ka by&#322;a seria, w skali 1-10: <b>6</b> = spory zapas, <b>8</b> = zosta&#322;y 2 powt&#243;rzenia w zapasie, <b>10</b> = ani jednego wi&#281;cej. Na RPE opiera si&#281; progresja, wi&#281;c warto wpisywa&#263;. Wpisanie RPE startuje timer przerwy.</p></div>';
-  h+='<div class="card sub"><details><summary>Rozgrzewka (12-15 min)</summary><ol class="small muted" style="padding-left:20px">'+
-     ROZGRZEWKA.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol></details></div>';
+   '<p class="small muted" style="margin:4px 0"><b>RPE</b> &#8212; jak ci&#281;&#380;ka by&#322;a seria, w skali 1-10: <b>6</b> = spory zapas, <b>8</b> = zosta&#322;y 2 powt&#243;rzenia w zapasie, <b>10</b> = ani jednego wi&#281;cej. Na RPE opiera si&#281; progresja, wi&#281;c warto wpisywa&#263;. Wpisanie RPE startuje timer przerwy.</p>'+
+   '<p class="small muted" style="margin:4px 0"><b>Ekran i sygna\u0142y:</b> w trakcie treningu aplikacja blokuje wygaszanie ekranu (je\u015bli telefon na to pozwala). Sygna\u0142 d\u017awi\u0119kowy dzia\u0142a przy otwartej stronie \u2014 po zablokowaniu telefonu iOS wstrzymuje stron\u0119 i sygna\u0142 us\u0142yszysz dopiero po powrocie (sam timer liczy dobrze). Najlepiej zostaw telefon z otwart\u0105 aplikacj\u0105.</p></div>';
+  h+='<div class="card"><h3>Rozgrzewka \u00b7 12-15 min</h3>'+
+     ROZGRZEWKA.map(x=>'<div style="border-bottom:1px solid var(--line);padding:8px 0">'+
+       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b class="small">'+esc(x.nazwa)+'</b>'+
+       '<button class="btn small secondary" onclick="timerRozgrzewki(\''+esc(x.nazwa)+'\','+x.czas+')">\u23f1 '+fmtT(x.czas)+'</button></div>'+
+       '<p class="tiny muted" style="margin:4px 0 0">'+esc(x.opis)+'</p></div>').join('')+'</div>';
 
   p.lista.forEach((slot,i)=>{
-    const ex=EXBYID[a.wariant==='s'?slot.s:slot.d];
+    let ex=EXBYID[a.wariant==='s'?slot.s:slot.d];
     if(ostrozny()&&ex.safety==='block') return;
-    h+=kartaCwiczenia(ex,slot,i);
+    const zam=a.zamiany&&a.zamiany[i];
+    if(zam&&EXBYID[zam]) ex=EXBYID[zam];
+    h+=kartaCwiczenia(ex,slot,i,!!zam);
   });
 
   h+=kartaCardio();
-  h+='<div class="card sub"><details><summary>Wyciszenie (5-8 min)</summary><ul class="small muted" style="padding-left:20px">'+
-     WYCISZENIE.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></details></div>';
+  h+='<div class="card"><h3>Wyciszenie \u00b7 5-8 min (dopasowane do treningu '+a.typ+')</h3>'+
+     (WYCISZENIE[a.typ]||WYCISZENIE.A).map(x=>'<div style="border-bottom:1px solid var(--line);padding:8px 0">'+
+       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b class="small">'+esc(x.nazwa)+'</b>'+
+       '<button class="btn small secondary" onclick="timerRozgrzewki(\''+esc(x.nazwa)+'\','+x.czas+')">\u23f1 '+fmtT(x.czas)+'</button></div>'+
+       '<p class="tiny muted" style="margin:4px 0 0">'+esc(x.opis)+'</p></div>').join('')+'</div>';
   h+='<button class="btn" style="margin-top:12px" onclick="zakonczTrening()">Zakończ trening</button>'+
-     '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Porzucić trening bez zapisu?\')){S.aktywna=null;save();pokaz(\'dzis\')}">Porzuć bez zapisu</button>'+'<div style="height:40px"></div>';
+     '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Porzucić trening bez zapisu?\')){S.aktywna=null;puscEkran();save();pokaz(\'dzis\')}">Porzuć bez zapisu</button>'+'<div style="height:40px"></div>';
   return h;
 }
-function kartaCwiczenia(ex,slot,i){
+function kartaCwiczenia(ex,slot,i,zamienione){
   const wp=S.aktywna.wpisy[ex.id]||[];
   const jedn=ex.typ==='t'?'sek.':'powt.';
   let h='<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">'+
@@ -810,6 +892,13 @@ function kartaCwiczenia(ex,slot,i){
   const prev=poprzedniTekst(ex);
   if(prev) h+='<p class="tiny muted">'+esc(prev)+'</p>';
   else{ const st=startText(ex,S.aktywna.wariant); if(st) h+='<div class="suggest">'+esc(st)+'</div>'; }
+  if(zamienione) h+='<p class="tiny" style="color:var(--warn)">Zamienione tylko na dzisiejszy trening.</p>';
+  const zRpe=(S.aktywna.wpisy[ex.id]||[]).filter(s=>s.rpe!==''&&s.rpe!=null&&s.p!==''&&s.p!=null);
+  if(ex.typ==='w'&&zRpe.length&&zRpe.length<slot.serie){
+    const o=zRpe[zRpe.length-1];
+    if(o.rpe>=9) h+='<div class="suggest down">Ostatnia seria na RPE '+o.rpe+' \u2014 zejd\u017a 5-10% ci\u0119\u017caru w nast\u0119pnej serii.</div>';
+    else if(o.rpe<=6&&o.p>=slot.do) h+='<div class="suggest">RPE '+o.rpe+' przy g\u00f3rze zakresu \u2014 mo\u017cesz do\u0142o\u017cy\u0107 2,5-5 kg ju\u017c w nast\u0119pnej serii.</div>';
+  }
 
 
   h+='<div class="sethead"><span>#</span><span>'+(ex.typ==='w'?(S.aktywna.wariant==='d'?'guma/kg':'kg'):'')+'</span><span>'+jedn+'</span><span>RPE</span><span></span></div>';
@@ -824,11 +913,17 @@ function kartaCwiczenia(ex,slot,i){
      '<button class="btn small secondary" style="width:100%" onclick="dodajSerie(\''+ex.id+'\')">+ Dodaj serię</button>'+
      (ex.typ==='t'
       ?'<button class="btn small secondary" style="width:100%" onclick="timerCwiczenia(\''+ex.id+'\','+slot.do+')">⏱ Start '+slot.do+' s</button>'
-      :'<button class="btn small secondary" style="width:100%" onclick="timerPrzerwy(75)">⏱ Przerwa 75 s</button>')+
+      :'<button class="btn small secondary" style="width:100%" onclick="timerPrzerwy('+przOf(ex.id)+')">⏱ Przerwa '+przOf(ex.id)+' s</button>')+
      '</div>';
   h+='<div class="row2" style="margin-top:6px">'+
      '<button class="btn small secondary" style="width:100%;font-size:.8rem" onclick="timerPrzerwy(60)">Przerwa 60 s</button>'+
      '<button class="btn small secondary" style="width:100%;font-size:.8rem" onclick="timerPrzerwy(90)">Przerwa 90 s</button></div>';
+  const alt=EX.filter(e=>e.partia===ex.partia&&e.id!==ex.id&&e.sprzet.includes(S.aktywna.wariant)&&!(ostrozny()&&e.safety==='block'));
+  if(alt.length){
+    h+='<details style="margin-top:8px"><summary>Brak tej maszyny? Zamie\u0144 na podobne</summary>'+
+      '<select onchange="zamienCwiczenie('+i+',this.value)" style="margin-top:6px"><option value="">wybierz zamiennik ('+esc(ex.partia)+')</option>'+
+      alt.map(e=>'<option value="'+e.id+'">'+esc(e.nazwa)+(e.safety==='warn'?' \u26a0':'')+'</option>').join('')+'</select></details>';
+  }
   h+='</div>';
   return h;
 }
@@ -842,9 +937,12 @@ function dodajSerie(id){
 }
 function ustawSerie(id,si,pole,v){
   S.aktywna.wpisy[id][si][pole]=v===''?'':Number(v); save();
-  if(pole==='rpe'&&v!=='') timerPrzerwy(75); // wpisany RPE = seria skończona, rusza przerwa
+  if(pole==='rpe'&&v!==''){ timerPrzerwy(przOf(id)); pokaz('trening',true); }
 }
 function usunSerie(id,si){ S.aktywna.wpisy[id].splice(si,1); save(); pokaz('trening',true); }
+function timerRozgrzewki(nazwa,sec){
+  startTimer({label:nazwa,sec,sygnal:'cwiczenie'});
+}
 function timerPrzerwy(sec){
   startTimer({label:'Przerwa między seriami',sec,sygnal:'przerwa'});
 }
@@ -925,6 +1023,7 @@ function renderPodsumowanie(){
   return h;
 }
 function zapiszSesje(){
+  puscEkran();
   S.sesje.push(tmpSesja);
   S.aktywna=null; save();
   const s=tmpSesja; tmpSesja=null;
@@ -1046,10 +1145,19 @@ function renderUstawienia(){
    '<div class="seg"><button class="'+(ostrozny()?'on':'')+'" onclick="zmienTryb(\'ostrozny\')">🛡 Ostrożny (do MRI)</button>'+
    '<button class="'+(!ostrozny()?'on':'')+'" onclick="zmienTryb(\'rozszerzony\')">Rozszerzony</button></div></div>';
 
+  h+='<div class="card"><h3>Rozmiar tekstu</h3>'+
+   '<div class="seg"><button class="'+(!S.ust.tekst||S.ust.tekst==='n'?'on':'')+'" onclick="S.ust.tekst=\'n\';save();zastosujTekst();pokaz(\'ustawienia\')">Normalny</button>'+
+   '<button class="'+(S.ust.tekst==='d'?'on':'')+'" onclick="S.ust.tekst=\'d\';save();zastosujTekst();pokaz(\'ustawienia\')">Du\u017cy</button>'+
+   '<button class="'+(S.ust.tekst==='b'?'on':'')+'" onclick="S.ust.tekst=\'b\';save();zastosujTekst();pokaz(\'ustawienia\')">Bardzo du\u017cy</button></div>'+
+   '<p class="tiny muted">Powi\u0119ksza ca\u0142\u0105 aplikacj\u0119 proporcjonalnie, uk\u0142ad si\u0119 nie rozjedzie.</p></div>';
   h+='<div class="card"><h3>Sygnały timerów</h3>'+
    '<div class="seg"><button class="'+(S.ust.wibracje?'on':'')+'" onclick="S.ust.wibracje=true;save();pokaz(\'ustawienia\')">Wibracje wł.</button>'+
    '<button class="'+(!S.ust.wibracje?'on':'')+'" onclick="S.ust.wibracje=false;save();pokaz(\'ustawienia\')">Wibracje wył.</button></div>'+
    '<p class="tiny muted">Wzory: krótka = koniec przerwy, podwójna = koniec ćwiczenia na czas, długa = koniec bloku cardio. Na iPhonie (Safari) wibracje nie działają w przeglądarce, więc aplikacja użyje dźwięku i mignięcia ekranu.</p>'+
+   '<div class="hr"></div><h3>Wielkość liter</h3>'+
+   '<div class="seg"><button class="'+(!S.ust.duze?'on':'')+'" onclick="S.ust.duze=false;save();zastosujDuze();pokaz(\'ustawienia\')">Standardowe</button>'+
+   '<button class="'+(S.ust.duze?'on':'')+'" onclick="S.ust.duze=true;save();zastosujDuze();pokaz(\'ustawienia\')">Duże litery</button></div>'+
+   '<p class="tiny muted">Powiększa cały tekst aplikacji, układ dostosowuje się sam.</p>'+
    '<button class="btn small secondary" onclick="sygnal(\'cwiczenie\')">Przetestuj sygnał</button></div>';
 
   h+='<div class="card"><h3>Plan treningowy</h3><p class="small muted">Podmiana ćwiczeń i zakresów w treningach A/B/C.</p>'+
@@ -1060,7 +1168,7 @@ function renderUstawienia(){
    '<div class="row2"><button class="btn small secondary" style="width:100%" onclick="eksport(\'json\')">Eksport JSON</button>'+
    '<button class="btn small secondary" style="width:100%" onclick="eksport(\'csv\')">Eksport CSV</button></div>'+
    '<label class="fld" style="margin-top:10px"><span>Import z pliku JSON</span><input type="file" accept=".json" onchange="importuj(this)"></label>'+
-   '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Skasować WSZYSTKIE dane? Tego nie da się cofnąć.\')){MAG.del(KEY);location.reload()}">Wyczyść wszystkie dane</button></div>';
+   '<button class="btn danger" style="margin-top:8px" onclick="if(confirm(\'Skasować WSZYSTKIE dane? Tego nie da się cofnąć.\')){MAG.del(KEY);location.reload()}">Wyczyść wszystkie dane</button></div>'+'<div style="height:60px"></div>';
   return h;
 }
 function zmienTryb(t){
@@ -1143,6 +1251,10 @@ function dodajSlot(t){ const pl=zapewnijOverride(); pl[t].lista.push({s:'dead-bu
 /* ============ START ============ */
 setInterval(()=>{ if(ekran==='trening'&&S.aktywna&&!TIMER){ /* odświeżenie zegara nagłówka */ 
   const e=document.querySelector('.eyebrow'); if(e) e.textContent='Trening w toku · '+fmtT((Date.now()-S.aktywna.start)/1000)+' od startu'; } },5000);
+function zastosujTekst(){ document.documentElement.className=(S.ust.tekst==='d'?'txt-d':S.ust.tekst==='b'?'txt-b':''); }
+zastosujTekst();
+function zastosujDuze(){ document.documentElement.classList.toggle('big', !!S.ust.duze); }
+zastosujDuze();
 pokaz(S.aktywna?'trening':'dzis');
 if('serviceWorker' in navigator && location.protocol==='https:'){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
