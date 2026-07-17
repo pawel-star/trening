@@ -950,6 +950,9 @@ function kartaCwiczenia(ex,slot,i,zamienione,prevId,nextId,nextTxt){
     tagHTML(ex.safety)+'</div>';
   h+='<div class="exdrawing">'+exFig(ex.fig,ex.typ==='t')+'</div>';
   h+=linkiPodgladu(ex,S.aktywna.wariant);
+  h+='<div class="row2" style="margin:2px 0 6px">'+
+     (prevId?'<button class="btn small secondary" style="width:100%" onclick="idzDo(\''+prevId+'\')">↑ Poprzednie</button>':'<span></span>')+
+     (nextId?'<button class="btn small secondary" style="width:100%" onclick="idzDo(\''+nextId+'\')">'+nextTxt+'</button>':'<span></span>')+'</div>';
   h+=opisHTML(ex);
   h+=spineTip(ex.wsk);
   const sug=sugestiaDlaCwiczenia(ex,slot);
@@ -989,9 +992,6 @@ function kartaCwiczenia(ex,slot,i,zamienione,prevId,nextId,nextTxt){
       '<select onchange="zamienCwiczenie('+i+',this.value)" style="margin-top:6px"><option value="">wybierz zamiennik ('+esc(ex.partia)+')</option>'+
       alt.map(e=>'<option value="'+e.id+'">'+esc(e.nazwa)+(e.safety==='warn'?' \u26a0':'')+'</option>').join('')+'</select></details>';
   }
-  h+='<div class="row2" style="margin-top:8px">'+
-     (prevId?'<button class="btn small secondary" style="width:100%" onclick="idzDo(\''+prevId+'\')">↑ Poprzednie</button>':'<span></span>')+
-     (nextId?'<button class="btn small secondary" style="width:100%" onclick="idzDo(\''+nextId+'\')">'+nextTxt+'</button>':'<span></span>')+'</div>';
   h+='</div>';
   return h;
 }
