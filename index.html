@@ -384,7 +384,7 @@ function kartaCwiczenia(ex,slot,klucz,slotIdx,zamienione,prevK,nextK,nextTxt,eks
   h+='</div>';
   return h;
 }
-function przelaczKarte(k){rozwiniete[k]=!(rozwiniete[k]!==undefined?rozwiniete[k]:false);pokaz('trening',true,k);}
+function przelaczKarte(k){var byla=rozwiniete[k]!==undefined?rozwiniete[k]:false;rozwiniete[k]=!byla;pokaz('trening',true);if(!byla){var el=document.getElementById(k);if(el){window.scrollTo(0,Math.max(0,el.getBoundingClientRect().top+(window.scrollY||0)-10));}}}
 function idzDo(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 function kluczKarty(exId){var a=S.aktywna;if(!a)return null;var p=plan()[a.typ];for(var i=0;i<p.lista.length;i++){var sl=p.lista[i];var zam=a.zamiany&&a.zamiany[i];var eid=zam||(a.wariant==='s'?sl.s:sl.d);if(eid===exId)return 'cw-'+i;}if(a.ekstra){for(var k=0;k<a.ekstra.length;k++){if(a.ekstra[k].id===exId)return 'cw-e'+k;}}return null;}
 function dodajSerie(id){var w=S.aktywna.wpisy[id]=S.aktywna.wpisy[id]||[];var o=w[w.length-1];w.push({c:o?o.c:'',p:'',rpe:''});save();pokaz('trening',true,kluczKarty(id));}
